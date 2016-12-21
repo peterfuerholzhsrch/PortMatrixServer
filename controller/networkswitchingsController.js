@@ -113,6 +113,24 @@ module.exports.saveNetworkswitching = function(req, res)
 };
 
 
+module.exports.insertNetworkswitching = function(req, res)
+{
+    console.log("networkswitchingsController", "req.body", req.body);
+
+    store.insertNetworkswitching(req.body,
+        function(err, doc) {
+            if (err) {
+                console.log('ctr.insertNetworkswitching', 'error =', err);
+                throw err;
+            }
+            console.log('ctr.insertNetworkswitching', 'doc =', doc);
+            res.type('application/json');
+            res.jsonp(doc);
+            res.end();
+        });
+};
+
+
 /**
  * @param req id is expected in path (see routes)
  * @param res

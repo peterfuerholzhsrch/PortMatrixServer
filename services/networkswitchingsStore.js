@@ -307,6 +307,21 @@ function publicSaveNetworkswitching(nwsw, callback) {
 }
 
 
+function publicInsertNetworkswitching(nwsw, callback) {
+    db.insert(nwsw, function(err, newDoc) {
+        if (err) {
+            console.log("error", err);
+        }
+        if (newDoc) {
+            console.log('Documents inserted: ', newDoc);
+        }
+        if (callback) {
+            callback(err, newDoc);
+        }
+    });
+}
+
+
 function publicDeleteNetworkswitching(id, callback) {
     db.remove({ _id: id }, {}, function(err, foundDoc){
         console.log("networkswitchingsStore.publicDeleteNetworkswitching", "id", id, "found", foundDoc);
@@ -321,4 +336,5 @@ module.exports = {
     getNetworkswitchings : publicGetNetworkswitchings,
     saveNetworkswitching : publicSaveNetworkswitching,
     getNetworkswitching : publicGetNetworkswitching,
+    insertNetworkswitching : publicInsertNetworkswitching,
     deleteNetworkswitching : publicDeleteNetworkswitching };
