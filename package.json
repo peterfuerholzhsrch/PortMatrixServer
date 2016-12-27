@@ -1,5 +1,5 @@
 {
-  "name": "pfs-notes-aplication",
+  "name": "PortMatrixServer",
   "version": "1.0.0",
   "description": "PortMatrix' Node server",
   "main": "server.js",

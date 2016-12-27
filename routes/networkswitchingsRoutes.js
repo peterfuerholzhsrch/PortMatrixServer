@@ -12,7 +12,7 @@ var networkswitchingsController = require('../controller/networkswitchingsContro
 router.get("/api/nwsw", networkswitchingsController.getNetworkswitchings);
 router.get("/api/nwsw/:id", networkswitchingsController.getNetworkswitching);
 router.put("/api/nwsw/:id", networkswitchingsController.saveNetworkswitching); // upsert
-router.post("/api/nwsw", networkswitchingsController.insertNetworkswitching);
+router.post("/api/nwsw", networkswitchingsController.insertNetworkswitching);  // insert
 router.delete("/api/nwsw/:id", networkswitchingsController.deleteNetworkswitching);
 
 module.exports = router;

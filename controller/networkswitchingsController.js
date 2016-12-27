@@ -60,12 +60,12 @@ module.exports.getNetworkswitchings = function(req, res)
         }, {}/*initial value*/);
     }
 
-    store.getNetworkswitchings(offset, limit, sortings, function(err, docs) {
+    store.getNetworkswitchings(offset, limit, sortings, function(err, docs, next) {
         if (err) {
-            console.log('ctr.getNetworkswitchings', 'error =', err);
-            throw err;
+            next(err);
+            return;
         }
-        console.log('ctr.getNetworkswitchings', 'docs =', docs);
+        console.log('ctr.getNetworkswitchings', 'number of docs =', docs ? docs.length : 0);
         res.type('application/json');
         // pack array into data-objects (see https://angular.io/docs/ts/latest/guide/server-communication.html#!#in-mem-web-api)
         res.jsonp({data : docs});
@@ -77,15 +77,16 @@ module.exports.getNetworkswitchings = function(req, res)
 /**
  * @param req id is expected in path (see routes)
  * @param res
+ * @param next
  */
-module.exports.getNetworkswitching = function(req, res)
+module.exports.getNetworkswitching = function(req, res, next)
 {
     // 'id' reference to the router pattern: '/api/notes/:id' !
     store.getNetworkswitching(req.params.id,
         function(err, doc) {
             if (err) {
-                console.log('ctr.getNetworkswitching', 'error =', err);
-                throw err;
+                next(err);
+                return;
             }
             console.log('ctr.getNetworkswitching', 'doc =', doc);
             res.type('application/json');
@@ -95,15 +96,15 @@ module.exports.getNetworkswitching = function(req, res)
 };
 
 
-module.exports.saveNetworkswitching = function(req, res)
+module.exports.saveNetworkswitching = function(req, res, next)
 {
     console.log("networkswitchingsController", "req.body", req.body);
 
     store.saveNetworkswitching(req.body,
         function(err, doc) {
             if (err) {
-                console.log('ctr.saveNetworkswitching', 'error =', err);
-                throw err;
+                next(err);
+                return;
             }
             console.log('ctr.saveNetworkswitching', 'doc =', doc);
             res.type('application/json');
@@ -113,20 +114,22 @@ module.exports.saveNetworkswitching = function(req, res)
 };
 
 
-module.exports.insertNetworkswitching = function(req, res)
+module.exports.insertNetworkswitching = function(req, res, next)
 {
     console.log("networkswitchingsController", "req.body", req.body);
 
     store.insertNetworkswitching(req.body,
         function(err, doc) {
             if (err) {
-                console.log('ctr.insertNetworkswitching', 'error =', err);
-                throw err;
+                next(err);
+                return;
             }
-            console.log('ctr.insertNetworkswitching', 'doc =', doc);
-            res.type('application/json');
-            res.jsonp(doc);
-            res.end();
+            if (doc) {
+                console.log('ctr.insertNetworkswitching', 'doc =', doc);
+                res.type('application/json');
+                res.jsonp(doc);
+                res.end();
+            }
         });
 };
 
@@ -134,15 +137,16 @@ module.exports.insertNetworkswitching = function(req, res)
 /**
  * @param req id is expected in path (see routes)
  * @param res
+ * @param next
  */
-module.exports.deleteNetworkswitching = function(req, res)
+module.exports.deleteNetworkswitching = function(req, res, next)
 {
     // 'id' reference to the router pattern: '/api/notes/:id' !
     store.deleteNetworkswitching(req.params.id,
         function(err, doc) {
             if (err) {
-                console.log('ctr.deleteNetworkswitching', 'error =', err);
-                throw err;
+                next(err);
+                return;
             }
             console.log('ctr.deleteNetworkswitching', 'doc =', doc);
             res.type('application/json');

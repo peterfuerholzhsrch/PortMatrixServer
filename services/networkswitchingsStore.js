@@ -7,6 +7,11 @@
 
 var Datastore = require('nedb');
 var db = new Datastore({ filename: './data/networkswitchings.db', autoload: true });
+
+// set index on 'id' to make it unique, but allow null value (!)
+db.ensureIndex({ fieldName: "id", unique: true, sparse: true }, function(error) { if (error) { throw error; } });
+
+
 //var Note = require('../public/js/model/note.js').Note;
 
 
