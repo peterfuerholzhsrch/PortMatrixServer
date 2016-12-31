@@ -19,7 +19,7 @@ db.ensureIndex({ fieldName: "id", unique: true, sparse: true }, function(error) 
  * set true to create some initial entries (applies only when notes collection is empty)
  * @type {boolean}
  */
-var FILL_INITIAL_ENTRIES = true; // TODO   false;
+var FILL_INITIAL_ENTRIES = false; // TODO   false;
 
 var MAX_RECORDS_LIMIT = 1000;
 
@@ -230,12 +230,14 @@ function fillInitialEntries() {
 }
 
 /**
+ * @param query query object
  * @param offset How many records shall be skipped (0=no skipping)
  * @param limit How many records shall be returned at max (is limited to MAX_RECORDS_LIMIT when not provided)
- * @param sorting ....§
+ * @param sorting sorting object
+ * @param callback
  * @return Array Returns persistent notes.
  */
-function publicGetNetworkswitchings(offset, limit, sorting, callback) {
+function publicGetNetworkswitchings(query, offset, limit, sorting, callback) {
 
     if (!sorting) {
         sorting = { "id": 1}; // sort by id ascending
@@ -243,12 +245,12 @@ function publicGetNetworkswitchings(offset, limit, sorting, callback) {
 
     console.log("networkswitchingsStore, sorting=" + JSON.stringify(sorting) + ", offset=" + offset + ", limit=" + limit);
 
-    db.find({})
+    db.find(query)
         .sort(sorting)
         .skip(offset || 0)
         .limit(limit || MAX_RECORDS_LIMIT)
         .exec(function (err, docs) {
-//            console.log("find() called, err=", err, " docs=", docs);
+            // console.log("find() called, err=", err, " docs=", docs);
 
             if (FILL_INITIAL_ENTRIES) {
                 try {
