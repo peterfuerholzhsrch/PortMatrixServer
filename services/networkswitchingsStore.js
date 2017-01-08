@@ -2,7 +2,7 @@
 /**
  * Created by pfu on 26/10/16.
  *
- * The notes store (= persistence layer).
+ * The network switching store (= persistence layer).
  */
 
 var Datastore = require('nedb');
@@ -11,8 +11,6 @@ var db = new Datastore({ filename: './data/networkswitchings.db', autoload: true
 // set index on 'id' to make it unique, but allow null value (!)
 db.ensureIndex({ fieldName: "id", unique: true, sparse: true }, function(error) { if (error) { throw error; } });
 
-
-//var Note = require('../public/js/model/note.js').Note;
 
 
 /**
@@ -25,7 +23,7 @@ var MAX_RECORDS_LIMIT = 1000;
 
 
 //
-// methods for saving / loading notes:
+// methods for saving / loading network switchings:
 //
 
 function fillInitialEntries() {
@@ -339,9 +337,19 @@ function publicDeleteNetworkswitching(id, callback) {
 }
 
 
+function publicDeleteNetworkswitchingsByProject(projectId, callback) {
+    // TODO
+    if (callback) {
+        callback(null, null);
+    }
+}
+
+
 module.exports = {
     getNetworkswitchings : publicGetNetworkswitchings,
     saveNetworkswitching : publicSaveNetworkswitching,
     getNetworkswitching : publicGetNetworkswitching,
     insertNetworkswitching : publicInsertNetworkswitching,
-    deleteNetworkswitching : publicDeleteNetworkswitching };
+    deleteNetworkswitching : publicDeleteNetworkswitching,
+    deleteNetworkswitchingsByProject : publicDeleteNetworkswitchingsByProject
+};

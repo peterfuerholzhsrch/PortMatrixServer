@@ -9,10 +9,10 @@ var express = require('express');
 var router = express.Router();
 var networkswitchingsController = require('../controller/networkswitchingsController.js');
 
-router.get("/api/nwsw", networkswitchingsController.getNetworkswitchings);
-router.get("/api/nwsw/:id", networkswitchingsController.getNetworkswitching);
-router.put("/api/nwsw/:id", networkswitchingsController.saveNetworkswitching); // upsert
-router.post("/api/nwsw", networkswitchingsController.insertNetworkswitching);  // insert
-router.delete("/api/nwsw/:id", networkswitchingsController.deleteNetworkswitching);
+router.get("/", networkswitchingsController.getNetworkswitchings);
+router.get("/:id", networkswitchingsController.getNetworkswitching);
+router.put("/:id", networkswitchingsController.saveNetworkswitching); // upsert
+router.post("/", networkswitchingsController.insertNetworkswitching);  // insert
+router.delete("/:id", networkswitchingsController.deleteNetworkswitching);
 
 module.exports = router;

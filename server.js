@@ -14,7 +14,7 @@ var app = express();
 
 function notFound(req, res, next) {
     res.setHeader("Content-Type", 'text/html');
-    res.send(404, "Confound it all!  We could not find ye's page! ")
+    res.status(404).end("Confound it all!  We could not find ye's page! ");
 }
 
 function errorHandler(err, req, res, next) {
@@ -28,6 +28,35 @@ function myDummyLogger(req, res, next) {
     next();
 }
 
+// TODO OK???
+function onError(error) {
+    if (error.syscall !== 'listen') {
+        throw error;
+    }
+
+    var bind = typeof port === 'string'
+        ? 'Pipe ' + port
+        : 'Port ' + port;
+
+    // handle specific listen errors with friendly messages
+    switch (error.code) {
+        case 'EACCES':
+            console.error(bind + ' requires elevated privileges');
+            process.exit(1);
+            break;
+        case 'EADDRINUSE':
+            console.error(bind + ' is already in use');
+            process.exit(1);
+            break;
+        default:
+            throw error;
+    }
+}
+
+
+
+//app.on('error', onError);
+
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 app.use(require("method-override")(function (req, res) {
@@ -38,8 +67,13 @@ app.use(require("method-override")(function (req, res) {
     }
 }));
 app.use(myDummyLogger);
-app.use(require('./routes/networkswitchingsRoutes.js'));
 app.use(express.static(__dirname + '/public'));
+//app.use("/api/users", require('./routes/usersRoutes.js'));
+app.use("/", require('./routes/usersRoutes.js'));
+// TODO app.use(jwt( app.get("jwt-validate"))); //after this middleware a token is required!
+app.use("/api/projects", require('./routes/projectsRoutes.js'));
+app.use("/api/nwsw", require('./routes/networkswitchingsRoutes.js'));
+
 app.use(notFound);
 app.use(errorHandler);
 
