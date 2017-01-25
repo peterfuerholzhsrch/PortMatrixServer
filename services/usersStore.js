@@ -2,14 +2,15 @@
 /**
  * The users store (= persistence layer).
  *
- * This code here originates in big parts from https://github.com/gfeller/Vorlesung_Express
+ * This code here originates in some parts from https://github.com/gfeller/Vorlesung_Express
  */
 
 const crypto = require('crypto');
 const cryptoUtil = require('../util/cryptoUtil');
+var Promise = require('promise');
 
 
-var Datastore = require('nedb');
+var Datastore = require('nedb-promise');
 var db = new Datastore({ filename: './data/users.db', autoload: true });
 
 // set index on 'email' to make it unique
@@ -29,56 +30,62 @@ function User(email, password) {
 // Functions of UsersStore
 //
 
-function publicRegisterUser(email, password, callback)
+function publicRegisterUserPr(email, password)
 {
     if (!(email && password)) {
-        callback("Email or password invalid", null);
-        return;
+        throw new Error("Email or password invalid");
     }
-
     var user = new User(email, password);
-    db.insert(user, function(err, newDoc){
-        if (callback) {
-            callback(err, newDoc);
-        }
-    });
+
+    return db.insert(user)
+        .then(function (newDoc) {
+            if (newDoc) {
+                console.log('User inserted: ', newDoc);
+            }
+            return Promise.resolve(newDoc);
+        });
 }
 
-function publicAuthenticate(email, password, callback) {
+
+function publicAuthenticatePr(email, password) {
     if (!(email && password)) {
-        callback("Email or password invalid", false);
+        return Promise.reject("Email or password invalid");
     }
 
-    db.findOne({ email: email }, function (err, doc) {
-        if (doc == null && !err) {
-            //publicRegisterUser(email, password, callback);
-            callback("Email or password invalid", false);
-        }
-        else {
-            callback(err, /* valid: */ doc && doc.passwortHash == cryptoUtil.hashPwd(password));
-        }
-    });
+    return db.findOne({ email: email })
+        .then(function (doc) {
+                if (doc == null) {
+                    throw new Error("Email or password invalid");
+                }
+                const passwordValid = doc && doc.passwortHash == cryptoUtil.hashPwd(password);
+                if (passwordValid) {
+                    return Promise.resolve(doc);
+                }
+                throw new Error("Email or password invalid");
+            });
 }
 
 
-function publicDeleteUser(userId, callback) {
+
+function publicDeleteUserPr(userId) {
     if (!userId) {
-        callback("userId invalid", false);
+        Promise.reject("userId invalid");
     }
 
-    db.remove({ _id: userId }, function (err, doc) {
-        if (doc == null && !err) {
-            callback("userId invalid", false);
-        }
-        else {
-            callback(err, /* valid: */doc);
-        }
-    });
+    db.remove({ _id: userId })
+        .then(function (numRemoved) {
+                if (numRemoved <= 0) {
+                    throw new Error("no user found with set userId");
+                }
+                Promise.resolve(userId);
+            });
 }
+
+
 
 
 module.exports = {
-    registerUser : publicRegisterUser,
-    authenticate : publicAuthenticate,
-    deleteUser: publicDeleteUser
+    registerUserPr : publicRegisterUserPr,
+    authenticatePr: publicAuthenticatePr,
+    deleteUserPr: publicDeleteUserPr
 };

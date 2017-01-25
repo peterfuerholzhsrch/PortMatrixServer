@@ -1,9 +1,12 @@
+"use strict";
+
+
 var util = require('../util/security');
 var usersStore = require("../services/usersStore.js");
 var projectsStore = require("../services/projectsStore.js");
 var networkswitchingsStore = require("../services/networkswitchingsStore.js");
+var security = require("../util/security.js");
 
-var Promise = require('promise');
 
 
 function Project(userId, admin) {
@@ -15,55 +18,57 @@ function Project(userId, admin) {
 
 
 module.exports.login = function(req, res, next) {
-    util.handleLogin(req, res);
+    util.handleLogin(req, res, next);
 };
+
 
 module.exports.registerUser = function(req, res, next) {
-    usersStore.registerUser(req.body.email, req.body.password, function(err, newUser) {
-        if (err) {
-            next(err);
-            return;
-        }
 
-        var referencedProject = req.body.referencedProject;
-        if (referencedProject) {
-           // add user to referenced project:
-            projectsStore.addUserToProject(referencedProject, newUser._id, function(err, response) {
-                if (err) {
-                    next(err);
-                    return;
-                }
-                res.jsonp(newUser);
-                res.end();
-            });
-        }
-        else {
-           // create new project:
-           projectsStore.insertProject(new Project(newUser._id, req.body.email), function(err, doc) {
-               if (err) {
-                   next(err);
-                   return;
-               }
-               res.jsonp(newUser);
-               res.end();
-           });
-        }
-    });
+    return usersStore.registerUserPr(req.body.email, req.body.password)
+        .then(function(newUser) {
+
+            var referencedProject = req.body.referencedProject;
+            if (referencedProject) {
+                // add user to referenced project:
+                projectsStore.addUserToProjectPr(referencedProject, newUser._id)
+                    .then(function(project) {
+                        return sendUserProjectAndToken(req.app, res, req.body.email, newUser, project);
+                    }, function(err) {
+                        next(err);
+                    });
+            }
+            else {
+                // create new project:
+                projectsStore.insertProjectPr(new Project(newUser._id, req.body.email))
+                    .then(function(project) {
+                        return sendUserProjectAndToken(req.app, res, req.body.email, newUser, project);
+                    }, function(err) {
+                        next(err);
+                    });
+            }
+        }, function(err) {
+            next(err);
+        });
 };
 
 
+function sendUserProjectAndToken(app, res, email, user, project) {
+    var jsonWebTokenObject = security.createWebTokenObject(app, email, user);
+    jsonWebTokenObject = Object.assign(jsonWebTokenObject, {project: project});
+    res.jsonp(jsonWebTokenObject);
+    res.end();
+}
 
-var getOwnProjectByUserPr = Promise.denodeify(projectsStore.getOwnProjectByUser);
-var deleteProjectPr = Promise.denodeify(deleteProject);
-var deleteUserPr = Promise.denodeify(usersStore.deleteUser);
 
 module.exports.deleteUser = function(req, res, next) {
-    var userId = req.body.userId;
-    return getOwnProjectByUserPr(userId)
-        .then(function(project) { deleteProjectPr(project._id); })
+    var userId = req.params.userId;
+    return projectsStore.getOwnProjectByUserPr(userId)
+        .then(function(project) { deleteNetworkswitchingsAndProjectPr(project._id); })
         // deleteUser even if project could not be found (deleteUserPr will fail anyway if user could not be found...)
-        .then(/*onFulfilled*/function() { deleteUserPr(userId) }, /*onRejected*/function() { deleteUserPr(userId) })
-        .then(function() { res.end(userId) });
+        .then(/*onFulfilled*/function() { usersStore.deleteUserPr(userId) },
+              /*onRejected*/function() { usersStore.deleteUserPr(userId) })
+        .then(function() { res.end(userId) })
+        .catch(function(err) { next(err); });
 };
 
 
@@ -72,102 +77,72 @@ module.exports.deleteUser = function(req, res, next) {
 //
 
 
-/**
- * @param req userid is expected in query (see routes); If assignedToo = true the projects where this user is a user is
- * returned as well.
- * @param res
- * @param next
- */
 module.exports.getProjectsByUser = function (req, res, next) {
-    projectsStore.getOwnProjectByUser(req.query.userId,
-        function (err, doc) {
-            if (err) {
-                next(err);
-                return;
-            }
+    projectsStore.getOwnProjectByUserPr(req.query.userId)
+        .then(function (doc) {
+                var projects = [];
+                if (doc) {
+                    projects.push(doc);
+                }
 
-            var projects = [];
-            if (doc) {
-                projects.push(doc);
-            }
-
-            var assignedToo = req.query.assignedToo && req.query.assignedToo.toLowerCase() == 'true';
-            if (assignedToo) {
-                projectsStore.getAssignedProjectsByUser(req.query.userId, function(err, docs) {
-                    if (err) {
-                        next(err);
-                        return;
-                    }
-                    projects = projects.concat(docs);
+                var assignedToo = req.query.assignedToo && req.query.assignedToo.toLowerCase() == 'true';
+                if (assignedToo) {
+                    projectsStore.getAssignedProjectsByUserPr(req.query.userId)
+                        .then(function(docs) {
+                                projects = projects.concat(docs);
+                                console.log('ctr.getProjectsByUser', 'projects =', projects);
+                                res.type('application/json');
+                                res.jsonp({ data: projects });
+                                res.end();
+                            }, function (err) {
+                                next(err);
+                            });
+                }
+                else {
                     console.log('ctr.getProjectsByUser', 'projects =', projects);
                     res.type('application/json');
                     res.jsonp({ data: projects });
                     res.end();
-                })
-            }
-            else {
-                console.log('ctr.getProjectsByUser', 'projects =', projects);
-                res.type('application/json');
-                res.jsonp({ data: projects });
-                res.end();
-            }
-        });
+                }
+            },
+            function (err) {
+                next(err);
+            });
 };
 
 
 module.exports.saveProject = function (req, res, next) {
     console.log("usersAndProjectsController", "req.body", req.body);
 
-    store.saveProject(req.body,
-        function (err, doc) {
-            if (err) {
-                next(err);
-                return;
-            }
-            console.log('ctr.saveProject', 'doc =', doc);
-            res.type('application/json');
-            res.jsonp(doc);
-            res.end();
-        });
-};
-
-
-insertProject = function (req, res, next) {
-    console.log("usersAndProjectsController", "req.body", req.body);
-
-    store.insertProject(req.body,
-        function (err, doc) {
-            if (err) {
-                next(err);
-                return;
-            }
-            if (doc) {
-                console.log('ctr.insertProject', 'doc =', doc);
+    projectsStore.saveProjectPr(req.body)
+        .then(
+            function (doc) {
+                console.log('ctr.saveProject', 'doc =', doc);
                 res.type('application/json');
                 res.jsonp(doc);
                 res.end();
-            }
+            },
+            function(err) {
+                next(err);
+            });
+};
+
+
+module.exports.deleteProject = function (req, res, next) {
+    deleteNetworkswitchingsAndProjectPr(req.param.id).next(
+        function(ok) {
+            // nothing
+        }, function(err) {
+            next(err);
         });
 };
 
-module.exports.deleteProject = function (req, res, next) {
-    deleteProject(req.param.id, next);
-};
 
-function deleteProject(projectId, callback) {
+function deleteNetworkswitchingsAndProjectPr(projectId) {
     console.log("usersAndProjectsController", "projectId", projectId);
 
-    networkswitchingsStore.deleteNetworkswitchingsByProject(projectId, function(err) {
-        if (err) {
-            callback(err);
-            return;
-        }
-        projectsStore.deleteProject(projectId,
-            function (err) {
-                console.log('ctr.deleteProject ' + (err ? 'Not OK' : 'Ok'));
-                if (callback) {
-                    callback(err, projectId);
-                }
-            });
-    });
+    return networkswitchingsStore.deleteNetworkswitchingsByProjectPr(projectId)
+        .then(function(ok) {
+            return projectsStore.deleteProjectPr(projectId)
+        });
 }

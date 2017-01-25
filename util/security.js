@@ -1,16 +1,21 @@
+"use strict";
+
 /**
  *
  * This code here originates (in big parts) from https://github.com/gfeller/Vorlesung_Express
  */
 
 var jwt = require('jsonwebtoken');
-var userService = require('../services/usersStore.js');
+var usersStore = require('../services/usersStore.js');
+
+
 
 function publicIsLoggedIn(req) {
     return req.user != null;
 }
 
-function authenticated(req, res, next) {
+
+function publicAuthenticated(req, res, next) {
 
     if (publicIsLoggedIn(req)) {
         next();
@@ -20,38 +25,67 @@ function authenticated(req, res, next) {
     }
 }
 
-function currentUser(req) {
+
+function publicCurrentUser(req) {
     return req.user.name;
 }
 
 
-function createSessionToken(name, secret, options, callback) {
+/**
+ *
+ * @param name
+ * @param secret
+ * @param options
+ * @returns {*} JSON web token
+ */
+function privateCreateSessionToken(name, secret, options) {
     if (!name) {
         return "";
     }
-    jwt.sign({name}, secret, options, (err, token) => callback(token));
+    return jwt.sign({name}, secret, options);
 }
 
-function handleLogin(req, res) {
+
+function publicHandleLogin(req, res, next) {
     if (publicIsLoggedIn(req)) {
         res.send(true);
     }
     else {
-        userService.authenticate(req.body.email, req.body.pwd, function (err, valid) {
-            if (valid) {
-                createSessionToken(req.body.email, req.app.get("jwt-secret"), req.app.get("jwt-sign"), (token) => res.json(token));
-            }
-            else {
-                res.status("401").json(false);
-            }
-        });
+        usersStore.authenticatePr(req.body.email, req.body.password)
+            .then(function (user) {
+                if (user) {
+                    res.jsonp(publicCreateWebTokenObject(req.app, req.body.email, user));
+                    res.end();
+                }
+                else {
+                    res.status("401").end()
+                }
+            },
+            function (err) {
+                res.status("401").end();
+            });
     }
 }
 
+
+/**
+ *
+ * @param app node application (can be accessed by 'request.app'
+ * @param email
+ * @param user
+ * @returns {{token: *, user: *}}
+ */
+function publicCreateWebTokenObject(app, email, user) {
+    var jsonWebToken = privateCreateSessionToken(email, app.get("jwt-secret"), app.get("jwt-sign"));
+    return { token: jsonWebToken, user: user };
+}
+
+
+
 module.exports = {
     isLoggedIn: publicIsLoggedIn,
-    handleAuthenticate: authenticated,
-    current: currentUser,
-    createToken: createSessionToken,
-    handleLogin: handleLogin
+    handleAuthenticate: publicAuthenticated,
+    current: publicCurrentUser,
+    handleLogin: publicHandleLogin,
+    createWebTokenObject : publicCreateWebTokenObject
 };

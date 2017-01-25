@@ -15,7 +15,9 @@
     "express-jwt": "^5.1.0",
     "jsonwebtoken": "^7.2.1",
     "method-override": "^2.3.3",
-    "nedb": "^1.8.0"
+    "nedb": "^1.8.0",
+    "nedb-promise": "^2.0.0",
+    "promise": "^7.1.1"
   },
   "devDependencies": {
     "async": "^2.1.4",

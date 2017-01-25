@@ -38,3 +38,4 @@
 {"id":37,"state":"Implemented","source":{"group":"SZP","host":"swbwz","ipAddr":"10.100.128.18","zone":"rot"},"destination":{"group":"SZD","host":"swbwz","ipAddr":"20.030.168.17","zone":"gelb","port":"16000"},"_id":"uuTS1cChU5WgNiN6"}
 {"id":43,"state":"Implemented","source":{"group":"SZP","host":"swawz","ipAddr":"10.100.127.18","zone":"orange"},"destination":{"group":"SZD","host":"bwawa","ipAddr":"20.030.168.17","zone":"rot","port":"8080"},"_id":"xCrypvIL84lX5Ak4"}
 {"$$indexCreated":{"fieldName":"id","unique":true,"sparse":true}}
+{"_id":null,"source":{"host":"HOST1"},"destination":{"host":"HOST2"},"protocol":"TCP","remark":"XXXXXX","user":"BLABLABLA"}

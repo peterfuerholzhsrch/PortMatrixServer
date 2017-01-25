@@ -15,6 +15,4 @@ router.post("/api/login", usersAndProjectsController.login);
 // <code>/api/users?projectId=<ID></code>. If no <code>projectId</code> is provided a new project is created.
 router.post("/api/users", usersAndProjectsController.registerUser);
 
-router.delete("/api/users", usersAndProjectsController.deleteUser);
-
 module.exports = router;

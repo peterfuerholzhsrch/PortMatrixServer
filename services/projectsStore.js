@@ -6,111 +6,61 @@
  * their network switchings.
  */
 
-var Datastore = require('nedb');
+
+var Promise = require('promise');
+
+var Datastore = require('nedb-promise');
 var db = new Datastore({ filename: './data/projects.db', autoload: true });
 
 // set index on 'adminId' since this is mostly requested
 db.ensureIndex({ fieldName: "adminId", unique: true }, function(error) { if (error) { throw error; } });
 
 
-var Promise = require('promise');
-
-var dbFindOnePr = Promise.denodeify(db.findOne);
-var dbUpdatePr = Promise.denodeify(db.update);
-var dbInsertPr = Promise.denodeify(db.insert);
-
 /**
  * Seeks the project where 'id' is set as admin.
  * @param id
- * @param callback
  */
-function publicGetOwnProjectByUser(id, callback) {
-    db.findOne({ adminId: id }, function(err, foundDoc) {
-        console.log("projectsStore.publicGetOwnProjectByUser", "adminId", id, "found", foundDoc);
-        if (callback) {
-            callback(err, foundDoc);
-        }
-    });
+function publicGetOwnProjectByUserPr(id) {
+    return db.findOne({ adminId: id })
+        .then(function(foundDoc) {
+            console.log("projectsStore.publicGetOwnProjectByUser", "adminId", id, "found", foundDoc);
+            return Promise.resolve(foundDoc);
+        });
 }
 
 
-function publicGetProjectById(id, callback) {
-    db.findOne({ _id: id }, function(err, foundDoc) {
-        console.log("projectsStore.publicGetProjectById", "id", id, "found", foundDoc);
-        if (callback) {
-            callback(err, foundDoc);
-        }
-    });
+function publicGetProjectByIdPr(id) {
+    return db.findOne({ _id: id })
+        .then(function(foundDoc) {
+            console.log("projectsStore.publicGetProjectById", "id", id, "found", foundDoc);
+            return Promise.resolve(foundDoc);
+        });
 }
 
 
 /**
  * Seeks all projects where 'id' is set as user.
  * @param id
- * @param callback
  */
-function publicGetAssignedProjectsByUser(id, callback) {
-    db.find({ users: id }, function(err, foundDocs) {
-        console.log("projectsStore.publicGetAssignedProjectsByUser", "id", id, "found", foundDocs);
-        if (callback) {
-            callback(err, foundDocs);
-        }
-    });
-}
-
-
-function publicSaveProject(project, callback) {
-    if (project._id) {
-        db.update({_id: project._id}, project, {}/*options*/, function(err, numReplaced) {
-            if (err) {
-                console.log("error", err);
-            }
-            if (numReplaced) {
-                console.log('Documents updated: ', numReplaced);
-            }
-            if (callback) {
-                callback(err, numReplaced);
-            }
-        } );
-    }
-    else {
-        db.insert(project, function(err, newDoc) {
-            if (err) {
-                console.log("error", err);
-            }
-            if (newDoc) {
-                console.log('Documents inserted: ', newDoc);
-            }
-            if (callback) {
-                callback(err, newDoc);
-            }
+function publicGetAssignedProjectsByUserPr(id) {
+    return db.find({ users: id })
+        .then(function(foundDocs) {
+            console.log("projectsStore.publicGetAssignedProjectsByUser", "id", id, "found", foundDocs);
+            return Promise.resolve(foundDocs);
         });
-    }
 }
 
 
 function publicSaveProjectPr(project) {
-    if (project._id) {
-        dbUpdatePr({_id: project._id}, project, {}/*options*/)
-            .then(function(err, numReplaced) {
-                console.log('Documents updated: ', numReplaced);
-                return numReplaced;
-            });
-    }
-    else {
-        dbInsertPr(project)
-            .then(function(err, newDoc) {
-                if (newDoc) {
-                    console.log('Documents inserted: ', newDoc);
-                }
-                return newDoc;
-            });
-    }
+    return db.update({_id: project._id}, project, {}/*options*/)
+        .then(function(numReplaced) {
+            console.log('Projects updated: ', numReplaced);
+            return Promise.resolve(project);
+        });
 }
 
 
-
-function publicInsertProject(project, callback) {
+function publicInsertProjectPr(project) {
     if (!project) {
         throw new Error("Project must not be null!")
     }
@@ -118,16 +68,11 @@ function publicInsertProject(project, callback) {
         throw new Error("Project's admin must not be null!");
     }
 
-    db.insert(project, function(err, newDoc) {
-        if (err) {
-            console.log("error", err);
-        }
+    return db.insert(project).then((newDoc) => {
         if (newDoc) {
-            console.log('Documents inserted: ', newDoc);
+            console.log('Project inserted: ', newDoc);
         }
-        if (callback) {
-            callback(err, newDoc);
-        }
+        return Promise.resolve(newDoc);
     });
 }
 
@@ -139,81 +84,37 @@ function publicAddUserToProjectPr(projectId, userId) {
     if (!userId) {
         throw new Error("UserId must not be null!");
     }
-    return dbFindOnePr({ _id: projectId })
-        .then(function(err, project) {
+    return db.findOne({ _id: projectId })
+        .then(function(project) {
             console.log("projectsStore.publicGetProjectByUser", "userId", userId, "found", project);
 
             if (!project.users) {
                 project.users = [];
             }
-            if (!project.users.contains(userId)) {
+            if (project.users.indexOf(userId) < 0) {
                 project.users.push(userId);
                 return publicSaveProjectPr(project);
             }
-            else {
-                console.log("UserId=" + userId + " already added to project with id=" + projectId + "!");
-                return project;
-            }
+            console.log("UserId=" + userId + " already added to project with id=" + projectId + "!");
+            return Promise.resolve(project);
         });
 }
 
 
-
-/*
-function publicAddUserToProject(projectId, userId, callback) {
-    if (!projectId) {
-        throw new Error("ProjectId must not be null!")
-    }
-    if (!userId) {
-        throw new Error("UserId must not be null!");
-    }
-    var project = db.findOne({ _id: projectId }, function(err, project) {
-        if (err) {
-            if (callback) {
-                callback(err);
-            }
-            return;
-        }
-
-        console.log("projectsStore.publicGetProjectByUser", "userId", userId, "found", project);
-
-        if (!project) {
-            if (callback) {
-                callback("no project where user could be added!");
-            }
-            return;
-        }
-
-        if (!project.users) {
-            project.users = [];
-        }
-        if (project.users.indexOf(userId) < 0) {
-            project.users.push(userId);
-            publicSaveProject(project, callback);
-        }
-        else {
-            console.log("UserId=" + userId + " already added to project with id=" + projectId + "!");
-            callback(null, "already added");
-        }
-    });
-}*/
-
-
-function publicDeleteProject(id, callback) {
-    db.remove({ _id: id }, {}, function(err, foundDoc){
-        console.log("networkswitchingsStore.publicDeleteNetworkswitching", "id", id, "found", foundDoc);
-        if (callback){
-            callback(err, foundDoc);
-        }
-    })
+function publicDeleteProjectPr(id) {
+    db.remove({ _id: id }, {})
+        .then(function(foundDoc){
+            console.log("Delete Project", "id", id, "found", foundDoc);
+            return Promise.resolve(id);
+        });
 }
 
 
 module.exports = {
-    getOwnProjectByUser : publicGetOwnProjectByUser,
-    getProjectById : publicGetProjectById,
-    getAssignedProjectsByUser : publicGetAssignedProjectsByUser,
-    saveProject : publicSaveProject,
-    insertProject : publicInsertProject,
-//    addUserToProject : publicAddUserToProject,
-    deleteProject : publicDeleteProject };
+    getOwnProjectByUserPr : publicGetOwnProjectByUserPr,
+    getProjectByIdPr : publicGetProjectByIdPr,
+    getAssignedProjectsByUserPr : publicGetAssignedProjectsByUserPr,
+    saveProjectPr : publicSaveProjectPr,
+    insertProjectPr : publicInsertProjectPr,
+    addUserToProjectPr : publicAddUserToProjectPr,
+    deleteProjectPr : publicDeleteProjectPr };

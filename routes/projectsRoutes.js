@@ -1,9 +1,12 @@
+"use strict";
+
+
 var express = require('express');
 var usersAndProjectsController = require('../controller/usersAndProjectsController');
 
 var router = express.Router();
 
-// Following format supported: /api/projects?userId=<ID>
+// Following format supported: /api/projects?userId=<ID>[&assignedToo=true|false]
 router.get("/", usersAndProjectsController.getProjectsByUser);
 
 //router.post("/api/projects", usersAndProjectsController.insertProject);

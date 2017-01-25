@@ -7,6 +7,8 @@
 
 var express = require('express');
 var bodyParser = require('body-parser');
+var jwt = require('express-jwt');
+
 
 // build up middleware:
 
@@ -54,6 +56,14 @@ function onError(error) {
 }
 
 
+//TODO needed / ok???
+var jwtSecret = 'jflkjfsadklöfad lfdas öijöeriteiöjleak ipa398289uo';
+var issuer = "Marco Endres / Peter Fuerholz";
+app.set("jwt-secret", jwtSecret); //secret should be in a config file - or better be a private key!
+app.set("jwt-sign", {expiresIn: "1d", audience :"self", issuer : issuer});
+app.set("jwt-validate", {secret: jwtSecret, audience :"self", issuer : issuer});
+
+
 
 //app.on('error', onError);
 
@@ -68,11 +78,15 @@ app.use(require("method-override")(function (req, res) {
 }));
 app.use(myDummyLogger);
 app.use(express.static(__dirname + '/public'));
-//app.use("/api/users", require('./routes/usersRoutes.js'));
-app.use("/", require('./routes/usersRoutes.js'));
-// TODO app.use(jwt( app.get("jwt-validate"))); //after this middleware a token is required!
-app.use("/api/projects", require('./routes/projectsRoutes.js'));
+app.use(require('./routes/usersNoAuthRoutes.js'));
+
+// TODO For test only:
 app.use("/api/nwsw", require('./routes/networkswitchingsRoutes.js'));
+
+app.use(jwt(app.get("jwt-validate"))); // after this middleware a token is required!
+app.use(require('./routes/usersAuthRoutes.js'));
+app.use("/api/projects", require('./routes/projectsRoutes.js'));
+// TODO app.use("/api/nwsw", require('./routes/networkswitchingsRoutes.js'));
 
 app.use(notFound);
 app.use(errorHandler);

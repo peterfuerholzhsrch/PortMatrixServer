@@ -1,4 +1,8 @@
 "use strict";
+
+var Promise = require('promise');
+
+
 /**
  * Created by pfu on 26/10/16.
  *
@@ -337,11 +341,9 @@ function publicDeleteNetworkswitching(id, callback) {
 }
 
 
-function publicDeleteNetworkswitchingsByProject(projectId, callback) {
+function publicDeleteNetworkswitchingsByProjectPr(projectId) {
     // TODO
-    if (callback) {
-        callback(null, null);
-    }
+    return Promise.resolve("nothing");
 }
 
 
@@ -351,5 +353,5 @@ module.exports = {
     getNetworkswitching : publicGetNetworkswitching,
     insertNetworkswitching : publicInsertNetworkswitching,
     deleteNetworkswitching : publicDeleteNetworkswitching,
-    deleteNetworkswitchingsByProject : publicDeleteNetworkswitchingsByProject
+    deleteNetworkswitchingsByProjectPr : publicDeleteNetworkswitchingsByProjectPr
 };
