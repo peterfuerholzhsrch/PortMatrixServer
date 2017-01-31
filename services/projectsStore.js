@@ -16,39 +16,27 @@ var db = new Datastore({ filename: './data/projects.db', autoload: true });
 db.ensureIndex({ fieldName: "adminId", unique: true }, function(error) { if (error) { throw error; } });
 
 
-/**
- * Seeks the project where 'id' is set as admin.
- * @param id
- */
-function publicGetOwnProjectByUserPr(id) {
-    return db.findOne({ adminId: id })
-        .then(function(foundDoc) {
-            console.log("projectsStore.publicGetOwnProjectByUser", "adminId", id, "found", foundDoc);
-            return Promise.resolve(foundDoc);
-        });
+
+function publicCheckProjectExists(projectId) {
+    return db.findOne({ _id: projectId }).then(function(foundDoc) {
+        return foundDoc ? Promise.resolve(foundDoc) : Promise.reject('No project available under set ID=' + projectId);
+    });
 }
 
 
-function publicGetProjectByIdPr(id) {
-    return db.findOne({ _id: id })
-        .then(function(foundDoc) {
-            console.log("projectsStore.publicGetProjectById", "id", id, "found", foundDoc);
-            return Promise.resolve(foundDoc);
-        });
-}
-
-
-/**
- * Seeks all projects where 'id' is set as user.
- * @param id
- */
-function publicGetAssignedProjectsByUserPr(id) {
-    return db.find({ users: id })
+function publicGetProjectsByUserIdPr(userId) {
+    return db.find({ '$or': [{ adminId:   userId },
+                             { users: userId }] })
         .then(function(foundDocs) {
-            console.log("projectsStore.publicGetAssignedProjectsByUser", "id", id, "found", foundDocs);
+            // admins at front:
+            var admin = foundDocs.filter(function(doc) { return doc.adminId == userId});
+            var users = foundDocs.filter(function(doc) { return doc.adminId != userId});
+            foundDocs = admin.concat(users);
+            console.log("projectsStore.publicGetProjectById", "adminId", userId, "found", foundDocs);
             return Promise.resolve(foundDocs);
         });
 }
+
 
 
 function publicSaveProjectPr(project) {
@@ -111,9 +99,8 @@ function publicDeleteProjectPr(id) {
 
 
 module.exports = {
-    getOwnProjectByUserPr : publicGetOwnProjectByUserPr,
-    getProjectByIdPr : publicGetProjectByIdPr,
-    getAssignedProjectsByUserPr : publicGetAssignedProjectsByUserPr,
+    checkProjectExists: publicCheckProjectExists,
+    getProjectsByUserIdPr : publicGetProjectsByUserIdPr,
     saveProjectPr : publicSaveProjectPr,
     insertProjectPr : publicInsertProjectPr,
     addUserToProjectPr : publicAddUserToProjectPr,

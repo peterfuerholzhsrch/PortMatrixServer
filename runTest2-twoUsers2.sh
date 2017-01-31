@@ -1,0 +1,1 @@
+$(npm bin)/jasmine-node ./test/twoUsers2-spec.js

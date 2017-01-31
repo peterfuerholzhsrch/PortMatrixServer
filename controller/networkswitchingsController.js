@@ -6,6 +6,7 @@
  */
 
 var store = require("../services/networkswitchingsStore.js");
+var projectsStore = require("../services/projectsStore.js");
 
 
 /**
@@ -113,6 +114,7 @@ module.exports.getNetworkswitchings = function (req, res) {
         }
 
         var query = { $or: [
+            { id: searchString },
             { state: searchString },
             { protocol: searchString },
             { remark: searchString },
@@ -127,23 +129,25 @@ module.exports.getNetworkswitchings = function (req, res) {
             { ['destination.zone']: searchString },
             { ['destination.port']: searchString }
         ]};
-        if (searchInt) {
-            query.$or.push({ id: searchInt });
-        }
-        // TODO search for creation date, last test date
+        // // search for integral number:
+        // if (searchInt) {
+        //    query.$or.push({ <integer column>: searchInt });
+        // }
+        // TODO search for creation date, last test date -> searchDate
     }
 
-    store.getNetworkswitchings(query, offset, limit, sortings, function (err, docs, next) {
-        if (err) {
-            next(err);
-            return;
-        }
-        console.log('ctr.getNetworkswitchings', 'number of docs =', docs ? docs.length : 0);
-        res.type('application/json');
-        // pack array into data-objects (see https://angular.io/docs/ts/latest/guide/server-communication.html#!#in-mem-web-api)
-        res.jsonp({data: docs});
-        res.end();
-    });
+    projectsStore.checkProjectExists(req.params.projectId)
+        .then(function() {
+            return store.getNetworkswitchingsPr(query, offset, limit, sortings)
+        })
+        .then(function (docs) {
+            console.log('ctr.getNetworkswitchings', 'number of docs =', docs ? docs.length : 0);
+            res.type('application/json');
+            // pack array into data-objects (see https://angular.io/docs/ts/latest/guide/server-communication.html#!#in-mem-web-api)
+            res.jsonp({data: docs});
+            res.end();
+        })
+        .catch(function(err) { next(err); });
 };
 
 
@@ -153,54 +157,65 @@ module.exports.getNetworkswitchings = function (req, res) {
  * @param next
  */
 module.exports.getNetworkswitching = function (req, res, next) {
-    // 'id' reference to the router pattern: '/api/notes/:id' !
-    store.getNetworkswitching(req.params.id,
-        function (err, doc) {
-            if (err) {
-                next(err);
-                return;
-            }
+    console.log("getNetworkswitching", "req.body", req.body);
+
+    projectsStore.checkProjectExists(req.params.projectId)
+        .then(function() {
+            // 'id' reference to the router pattern: '/api/notes/:id' !
+            return store.getNetworkswitchingPr(req.params.id)
+        })
+        .then(function (doc) {
             console.log('ctr.getNetworkswitching', 'doc =', doc);
             res.type('application/json');
             res.jsonp(doc);
-            res.end();
-        });
+            res.end()
+        })
+        .catch(function(err) { next(err); });
 };
 
 
 module.exports.saveNetworkswitching = function (req, res, next) {
-    console.log("networkswitchingsController", "req.body", req.body);
+    console.log("saveNetworkswitching", "req.body", req.body);
 
-    store.saveNetworkswitching(req.body,
-        function (err, doc) {
-            if (err) {
-                next(err);
-                return;
-            }
+    var projectId = req.params.projectId;
+    projectsStore.checkProjectExists(projectId)
+        .then(function() {
+            // set id and reference to project:
+            req.body['projectId'] = projectId;
+            req.body['_id'] = req.params.id;
+
+            return store.saveNetworkswitchingPr(req.body)
+        })
+        .then(function (doc) {
             console.log('ctr.saveNetworkswitching', 'doc =', doc);
             res.type('application/json');
             res.jsonp(doc);
             res.end();
-        });
+        })
+        .catch(function(err) { next(err); });
 };
 
 
 module.exports.insertNetworkswitching = function (req, res, next) {
-    console.log("networkswitchingsController", "req.body", req.body);
+    console.log("insertNetworkswitching", "req.body", req.body);
 
-    store.insertNetworkswitching(req.body,
-        function (err, doc) {
-            if (err) {
-                next(err);
-                return;
-            }
-            if (doc) {
-                console.log('ctr.insertNetworkswitching', 'doc =', doc);
-                res.type('application/json');
-                res.jsonp(doc);
-                res.end();
-            }
-        });
+    var projectId = req.params.projectId;
+    projectsStore.checkProjectExists(projectId)
+        .then(function() {
+            // _id shall be set by the db-server:
+            delete req.body._id;
+            // set reference to project:
+            req.body['projectId'] = projectId;
+
+            return store.insertNetworkswitchingPr(req.body)
+        })
+        .then(function (doc) {
+            console.log('ctr.insertNetworkswitching', 'doc =', doc);
+            res.type('application/json');
+            res.jsonp(doc);
+            res.end();
+        })
+        .catch(function(err) { next(err); });
 };
 
 
@@ -210,16 +225,16 @@ module.exports.insertNetworkswitching = function (req, res, next) {
  * @param next
  */
 module.exports.deleteNetworkswitching = function (req, res, next) {
-    // 'id' reference to the router pattern: '/api/notes/:id' !
-    store.deleteNetworkswitching(req.params.id,
-        function (err, doc) {
-            if (err) {
-                next(err);
-                return;
-            }
+    projectsStore.checkProjectExists(req.params.projectId)
+        .then(function() {
+            // 'id' reference to the router pattern: '/api/notes/:id' !
+            return store.deleteNetworkswitchingPr(req.params.id)
+        })
+        .then(function (doc) {
             console.log('ctr.deleteNetworkswitching', 'doc =', doc);
             res.type('application/json');
             res.jsonp(doc);
             res.end();
-        });
+        })
+        .catch(function(err) { next(err); });
 };

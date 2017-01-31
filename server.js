@@ -81,9 +81,9 @@ app.use(express.static(__dirname + '/public'));
 app.use(require('./routes/usersNoAuthRoutes.js'));
 
 // TODO For test only:
-app.use("/api/nwsw", require('./routes/networkswitchingsRoutes.js'));
+app.use("/api/nwsws", require('./routes/networkswitchingsRoutes.js'));
 
-app.use(jwt(app.get("jwt-validate"))); // after this middleware a token is required!
+//app.use(jwt(app.get("jwt-validate"))); // after this middleware a token is required!
 app.use(require('./routes/usersAuthRoutes.js'));
 app.use("/api/projects", require('./routes/projectsRoutes.js'));
 // TODO app.use("/api/nwsw", require('./routes/networkswitchingsRoutes.js'));

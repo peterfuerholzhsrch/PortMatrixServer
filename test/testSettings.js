@@ -1,3 +1,4 @@
+"use strict";
 /**
  * Created by pfu on 25/01/17.
  */
@@ -27,6 +28,7 @@ module.exports = {
     LOGIN_REST_URL: PUBLIC_BASE_URL + '/api/login',
     USERS_REST_URL: PUBLIC_BASE_URL + '/api/users',
     PROJECTS_REST_URL: PUBLIC_BASE_URL + '/api/projects',
+    NWSWS_REST_URL: PUBLIC_BASE_URL + '/api/nwsws',
     frisby : publicFrisby,
     callbackAndToss: publicCallbackAndToss
 }

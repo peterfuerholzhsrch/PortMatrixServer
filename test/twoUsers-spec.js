@@ -13,6 +13,10 @@ var jwtToken1, jwtToken2;
 var projectId1;
 
 
+
+
+
+// create user 1 and 2, check that they belong to same project then delete first user 1, then 2:
 async.series([
     function(cb) {
         console.log('Create User 1');
@@ -28,13 +32,13 @@ async.series([
             .afterJSON(function () {
                 userId1 = json.user._id;
                 jwtToken1 = json.token;
+                projectId1 = json.project._id;
                 cb(null);
             })
             .toss();
     },
     function(cb) {
         console.log('Get project(s) of User 1');
-        //userid1 = json._id;
         test.frisby.create('Get project(s) of user1')
             .addHeader('authorization', 'Bearer ' + jwtToken1)
             .get(test.PROJECTS_REST_URL + '?' + 'userId=' + userId1)
@@ -42,7 +46,7 @@ async.series([
             .inspectBody()
             .afterJSON(function(json) {
                 console.log("projects of user1=" + userId1 + ": " + JSON.stringify(json));
-                projectId1 = json.data[0]._id;
+                expect(json.data[0]._id).toEqual(projectId1);
                 cb(null);
             })
             .toss();
@@ -88,13 +92,14 @@ async.series([
         test.callbackAndToss(f, cb);
     },
     function(cb) {
-        console.log("Check that User 2 does not have any project");
+        console.log("Check that User 2 is now the admin of the project");
         var f = test.frisby.create('Get project of user2')
             .addHeader('authorization', 'Bearer ' + jwtToken2)
-            .get(test.PROJECTS_REST_URL + '?' + 'userId=' + userId2 + '&' + 'assignedToo=true')
+            .get(test.PROJECTS_REST_URL + '?' + 'userId=' + userId2)
             .expectStatus(200)
             .inspectBody()
-            .expectJSONLength('data', 0); // = length of the array
+            .expectJSONLength('data', 1) // = length of the array
+            .expectBodyContains('"adminId":"' + userId2 + '"');
         test.callbackAndToss(f, cb);
     },
     function(cb) {
