@@ -11,6 +11,7 @@
 var test = require('./testSettings');
 var async = require('async');
 
+// TODO add creationBy, lastchangeBy, creationDate, lastchangeDate
 
 const nwsws = [
     {
@@ -233,6 +234,7 @@ function createNwsw(nwsws, idx, cb) {
         return; // if test is run createNwsw is run by async.series as well as stand-alone -> don't do anything when run stand-alone
     }
     test.frisby.create('Create network switching')
+        .addHeader('authorization', 'Bearer ' + jwtToken)
         .post(test.NWSWS_REST_URL + "/" + projectId, nwsws[idx], {json: true})
         .expectStatus(200)
         .after(function (json) {

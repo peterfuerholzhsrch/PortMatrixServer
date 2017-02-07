@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "test": "$(npm bin)/jasmine-node ."
+    "test": "echo 'Tests must be run separately! Use the shell scripts for this (runTestXY.sh). $(npm bin)/jasmine-node DOES NOT RUN PROPERLY.'"
   },
   "author": "peterfuerholzhsrch",
   "license": "ISC",

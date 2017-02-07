@@ -90,11 +90,11 @@ var publicDeleteUser2 = function(cb) {
 
 
 module.exports = {
-    userId1: function () { return publicUserId1 },
-    userId2: function () { return publicUserId2 },
-    jwtToken1: function () { return publicJwtToken1 },
-    jwtToken2: function () { return publicJwtToken2 },
-    projectId1: function () { return publicProjectId1 },
+    getUserId1: function () { return publicUserId1 },
+    getUserId2: function () { return publicUserId2 },
+    getJwtToken1: function () { return publicJwtToken1 },
+    getJwtToken2: function () { return publicJwtToken2 },
+    getProjectId1: function () { return publicProjectId1 },
     createUser1: publicCreateUser1,
     getProjectOfUser1: publicGetProjectOfUser1,
     createUser2: publicCreateUser2,

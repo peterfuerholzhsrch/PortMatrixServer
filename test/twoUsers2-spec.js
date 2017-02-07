@@ -18,15 +18,15 @@ async.series([
     ops.deleteUser2,
     function(cb) {
         console.log("Check that User 1 is still the admin of the project");
-        console.log("ops.jwtToken1=", ops.jwtToken1());
-        console.log("(ops.jwtToken2=", ops.jwtToken2(), ")");
-        console.log("ops.userId1=", ops.userId1());
+        console.log("ops.getJwtToken1=", ops.getJwtToken1());
+        console.log("(ops.getJwtToken2=", ops.getJwtToken2(), ")");
+        console.log("ops.getUserId1=", ops.getUserId1());
         var f = test.frisby.create('Get project of user1')
-            .addHeader('authorization', 'Bearer ' + ops.jwtToken1())
-            .get(test.PROJECTS_REST_URL + '?' + 'userId=' + ops.userId1())
+            .addHeader('authorization', 'Bearer ' + ops.getJwtToken1())
+            .get(test.PROJECTS_REST_URL + '?' + 'userId=' + ops.getUserId1())
             .expectStatus(200)
             .inspectBody()
-            .expectBodyContains('"adminId":"' + ops.userId1() + '"')
+            .expectBodyContains('"adminId":"' + ops.getUserId1() + '"')
             .expectBodyContains('"users":[]');
         test.callbackAndToss(f, cb);
     },

@@ -78,25 +78,18 @@ module.exports.deleteUser = function(req, res, next) {
                 return Promise.resolve(project._id);
             }
             // remove user in these projects:
-            const lastProject = projects.length > 0 ? projects[projects.length - 1] : null;
+            var promises = [];
             for (const project of projects) {
                 var idxToRemove = project.users.indexOf(userId);
                 project.users.splice(idxToRemove, 1);
-                if (lastProject == project) {
-                    projectsStore.saveProjectPr(project).then(function() { return Promise.resolve(null); });
-                }
-                else {
-                    projectsStore.saveProjectPr(project);
-                }
+                promises.push(projectsStore.saveProjectPr(project).then(function() { return Promise.resolve(null); }));
             }
-            if (!lastProject) {
-                return Promise.resolve(null); // user was assigned only, no project to delete
-            }
+            return Promise.all(promises);
         })
         .then(function (projectId) {
-            if (projectId) {
+            if (typeof projectId === "string") {
                 return deleteNetworkswitchingsAndProjectPr(projectId);
-            }
+            } // otherwise it is an array
             return Promise.resolve(null);
         })
         // deleteUser even if project could not be found (deleteUserPr will fail anyway if user could not be found...)
