@@ -77,6 +77,8 @@ module.exports.getNetworkswitchings = function (req, res) {
         }, {}/*initial value*/);
     }
 
+    var query = { projectId: req.params.projectId };
+
     // handle query:
     if (q && q.trim()) {
         q = q.trim();
@@ -113,27 +115,29 @@ module.exports.getNetworkswitchings = function (req, res) {
             }
         }
 
-        var query = { $or: [
-            { id: searchString },
-            { state: searchString },
-            { protocol: searchString },
-            { remark: searchString },
-            { test_state: searchString },  // TODO does not yet exist
-            { ['source.group']: searchString },
-            { ['source.host']: searchString },
-            { ['source.ipAddr']: searchString },
-            { ['source.zone']: searchString },
-            { ['destination.group']: searchString },
-            { ['destination.host']: searchString },
-            { ['destination.ipAddr']: searchString },
-            { ['destination.zone']: searchString },
-            { ['destination.port']: searchString }
-        ]};
-        // // search for integral number:
-        // if (searchInt) {
-        //    query.$or.push({ <integer column>: searchInt });
-        // }
-        // TODO search for creation date, last test date -> searchDate
+        if (searchString) {
+            query['$or'] = [
+                    {id: searchString},
+                    {state: searchString},
+                    {protocol: searchString},
+                    {remark: searchString},
+                    {test_state: searchString},  // TODO does not yet exist
+                    {['source.group']: searchString},
+                    {['source.host']: searchString},
+                    {['source.ipAddr']: searchString},
+                    {['source.zone']: searchString},
+                    {['destination.group']: searchString},
+                    {['destination.host']: searchString},
+                    {['destination.ipAddr']: searchString},
+                    {['destination.zone']: searchString},
+                    {['destination.port']: searchString}
+                ];
+            // // search for integral number:
+            // if (searchInt) {
+            //    query.$or.push({ <integer column>: searchInt });
+            // }
+            // TODO search for creation date, last test date -> searchDate
+        }
     }
 
     projectsStore.checkProjectExists(req.params.projectId)

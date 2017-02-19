@@ -16,7 +16,11 @@ var db = new Datastore({ filename: './data/projects.db', autoload: true });
 db.ensureIndex({ fieldName: "adminId", unique: true }, function(error) { if (error) { throw error; } });
 
 
-
+/**
+ * Check if project with set projectId exists.
+ * @param projectId
+ * @returns {*|Promise.<TResult>}
+ */
 function publicCheckProjectExists(projectId) {
     return db.findOne({ _id: projectId }).then(function(foundDoc) {
         return foundDoc ? Promise.resolve(foundDoc) : Promise.reject('No project available under set ID=' + projectId);
@@ -24,6 +28,24 @@ function publicCheckProjectExists(projectId) {
 }
 
 
+/**
+ * @param projectId
+ * @returns {*|Promise.<TResult>}
+ */
+function publicGetProjectByIdPr(projectId) {
+    return db.findOne({ _id: projectId })
+        .then(function(foundDoc){
+            console.log("projectsStore.publicGetProjectByIdPr", "_id", projectId, "found", foundDoc);
+            return Promise.resolve(foundDoc);
+        });
+
+}
+
+
+/**
+ * @param userId
+ * @returns {*|Promise.<TResult>}
+ */
 function publicGetProjectsByUserIdPr(userId) {
     return db.find({ '$or': [{ adminId:   userId },
                              { users: userId }] })
@@ -38,7 +60,10 @@ function publicGetProjectsByUserIdPr(userId) {
 }
 
 
-
+/**
+ * @param project
+ * @returns {*|Promise.<TResult>}
+ */
 function publicSaveProjectPr(project) {
     return db.update({_id: project._id}, project, {}/*options*/)
         .then(function(numReplaced) {
@@ -48,6 +73,10 @@ function publicSaveProjectPr(project) {
 }
 
 
+/**
+ * @param project
+ * @returns {*|Promise.<TResult>}
+ */
 function publicInsertProjectPr(project) {
     if (!project) {
         throw new Error("Project must not be null!")
@@ -65,6 +94,11 @@ function publicInsertProjectPr(project) {
 }
 
 
+/**
+ * @param projectId
+ * @param userId
+ * @returns {*|Promise.<TResult>}
+ */
 function publicAddUserToProjectPr(projectId, userId) {
     if (!projectId) {
         throw new Error("ProjectId must not be null!")
@@ -89,6 +123,9 @@ function publicAddUserToProjectPr(projectId, userId) {
 }
 
 
+/**
+ * @param id
+ */
 function publicDeleteProjectPr(id) {
     db.remove({ _id: id }, {})
         .then(function(foundDoc){
@@ -100,6 +137,7 @@ function publicDeleteProjectPr(id) {
 
 module.exports = {
     checkProjectExists: publicCheckProjectExists,
+    getProjectByIdPr: publicGetProjectByIdPr,
     getProjectsByUserIdPr : publicGetProjectsByUserIdPr,
     saveProjectPr : publicSaveProjectPr,
     insertProjectPr : publicInsertProjectPr,

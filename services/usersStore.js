@@ -66,6 +66,16 @@ function publicAuthenticatePr(email, password) {
 }
 
 
+function publicGetUserPr(userId) {
+    if (!userId) {
+        Promise.reject("userId invalid");
+    }
+    return db.findOne({ _id: userId })
+        .then(function (doc) {
+            return Promise.resolve(doc);
+        });
+}
+
 
 function publicDeleteUserPr(userId) {
     if (!userId) {
@@ -87,5 +97,6 @@ function publicDeleteUserPr(userId) {
 module.exports = {
     registerUserPr : publicRegisterUserPr,
     authenticatePr: publicAuthenticatePr,
+    getUserPr: publicGetUserPr,
     deleteUserPr: publicDeleteUserPr
 };

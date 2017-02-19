@@ -7,6 +7,31 @@ var projectsStore = require("../services/projectsStore.js");
 var networkswitchingsStore = require("../services/networkswitchingsStore.js");
 var security = require("../util/security.js");
 
+const nodemailer = require('nodemailer');
+
+var smtpConfig = process.env.PORTMATRIX_SMTP_CONFIG;
+
+if (!smtpConfig) {
+    console.log("Please set environment variable PORTMATRIX_SMTP_CONFIG with a value in the following format:");
+    console.log("smtps://<smtp-user>:<smtp-password>@<smtp-server>");
+    console.log("");
+    console.log("For more information see: https://nodemailer.com/smtp");
+    process.exit(1);
+}
+
+// create reusable transporter object using the default SMTP transport
+let transporter = nodemailer.createTransport(smtpConfig);
+// Alternative configuration:
+//     {
+//     //service: 'vtxmail',
+//     port: '587',
+//     host: 'asmtp.mail.hostpoint.ch',
+//     secure: false,
+//     auth: {
+//         user: 'portmatrix@neshendra.ch',
+//         pass: '<your password>'
+//     }
+// });
 
 
 function Project(userId, admin) {
@@ -100,9 +125,68 @@ module.exports.deleteUser = function(req, res, next) {
 };
 
 
+module.exports.inviteColleagues = function(req, res, next) {
+    var projectId = req.body.projectId;
+    var adminId = req.body.adminId;
+    var recipients = req.body.recipients;
+
+    var recipientsStr = recipients.join(", ");
+
+    usersStore.getUserPr(adminId)
+        .then(function(user) {
+            let mailOptions = {
+                from: '"PortMatrix" <portmatrix@neshendra.ch>', // sender address
+                to: recipientsStr, // list of receivers
+                subject: "Invitation to take part in " + user.email + "'s PortMatrix Project", // Subject line
+                html: buildEmailMessage(user, projectId) // html body
+            };
+
+            // send mail with defined transport object
+            transporter.sendMail(mailOptions, (error, info) => {
+                if (error) {
+                    console.log(error);
+                    next(error);
+                    return;
+                }
+                console.log('Message %s sent: %s', info.messageId, info.response);
+            });
+            res.end();
+        })
+        .catch(function (error) {
+            next(error);
+        });
+
+};
+
+
+function buildEmailMessage(user, projectId) {
+    return ["<p>Hi</p>",
+            user.email + " has invited you to take part in his/her PortMatrix project.<br>",
+            "Click <a href='http://localhost:4200/user?assignedProject=" + projectId + "'>here</a> and sign up ",
+            "to join! ",
+            "<p>Kind regards,<br>",
+            "PortMatrix-App (On behalf of " + user.email + ")</p>"].join('\n');
+}
+
+
+
 //
 // project centric functions
 //
+
+module.exports.getProject = function (req, res, next) {
+    projectsStore.getProjectByIdPr(req.params.projectId)
+        .then(function (project) {
+                console.log('ctr.getProject', 'project =', project);
+                res.type('application/json');
+                res.jsonp(project);
+                res.end();
+            },
+            function (err) {
+                next(err);
+            });
+};
+
 
 module.exports.getProjectsByUser = function (req, res, next) {
     projectsStore.getProjectsByUserIdPr(req.query.userId)

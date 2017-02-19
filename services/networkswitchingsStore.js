@@ -48,14 +48,13 @@ function publicGetNetworkswitchingsPr(query, offset, limit, sorting) {
 
 
 /**
- * @param id
+ * @param nwswId
  * @returns {*|Promise.<TResult>}
  */
-function publicGetNetworkswitchingPr(id)
-{
-    return db.findOne({ _id: id })
+function publicGetNetworkswitchingPr(nwswId) {
+    return db.findOne({ _id: nwswId })
         .then(function(foundDoc){
-            console.log("networkswitchingsStore.publicGetNetworkswitching", "id", id, "found", foundDoc);
+            console.log("networkswitchingsStore.publicGetNetworkswitching", "id", nwswId, "found", foundDoc);
             return Promise.resolve(foundDoc);
         });
 }
