@@ -138,7 +138,7 @@ module.exports.inviteColleagues = function(req, res, next) {
                 from: '"PortMatrix" <portmatrix@neshendra.ch>', // sender address
                 to: recipientsStr, // list of receivers
                 subject: "Invitation to take part in " + user.email + "'s PortMatrix Project", // Subject line
-                html: buildEmailMessage(user, projectId) // html body
+                html: buildEmailMessage(getHostPortString(req), user, projectId) // html body
             };
 
             // send mail with defined transport object
@@ -158,11 +158,17 @@ module.exports.inviteColleagues = function(req, res, next) {
 
 };
 
+function getHostPortString(req) {
+    var url = req.headers.referer;
+    var idxOfProtocol = url.indexOf('//');
+    var idxOfPath = url.indexOf('/', idxOfProtocol + 2);
+    return url.substring(0, idxOfPath > 0 ? idxOfPath : url.length);
+}
 
-function buildEmailMessage(user, projectId) {
+function buildEmailMessage(hostPortString, user, projectId) {
     return ["<p>Hi</p>",
             user.email + " has invited you to take part in his/her PortMatrix project.<br>",
-            "Click <a href='http://localhost:4200/user?assignedProject=" + projectId + "'>here</a> and sign up ",
+            "Click <a href='" + hostPortString + "/user?assignedProject=" + projectId + "'>here</a> and sign up ",
             "to join! ",
             "<p>Kind regards,<br>",
             "PortMatrix-App (On behalf of " + user.email + ")</p>"].join('\n');

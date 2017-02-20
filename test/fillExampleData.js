@@ -11,7 +11,9 @@
 var test = require('./testSettings');
 var async = require('async');
 
-// TODO add creationBy, lastchangeBy, creationDate, lastchangeDate
+var USER_EMAIL = "a@a.a";
+
+// TODO check states!
 
 const nwsws = [
     {
@@ -208,7 +210,7 @@ async.series([
         console.log('Create User');
         test.frisby.create('Create User')
             .post(test.USERS_REST_URL, {
-                email: "a@a.a",
+                email: USER_EMAIL,
                 password: "a"
             })
             .expectStatus(200)
@@ -233,6 +235,9 @@ function createNwsw(nwsws, idx, cb) {
     if (idx >= nwsws.length) {
         return; // if test is run createNwsw is run by async.series as well as stand-alone -> don't do anything when run stand-alone
     }
+    nwsws[idx].creationDate = new Date();
+    nwsws[idx].creationBy = USER_EMAIL;
+
     test.frisby.create('Create network switching')
         .addHeader('authorization', 'Bearer ' + jwtToken)
         .post(test.NWSWS_REST_URL + "/" + projectId, nwsws[idx], {json: true})
