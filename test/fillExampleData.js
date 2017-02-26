@@ -17,183 +17,183 @@ var USER_EMAIL = "a@a.a";
 
 const nwsws = [
     {
-        id: '11', state: 'Pending',
+        id: '11', state: 'To be implemented', systemEnvironment: 'DEVELOPMENT_SYSTEM',
         source: {group: 'SZP', host: 'swawz', ipAddr: '10.100.127.18', zone: 'braun'},
         destination: {group: 'SZD', host: 'bwawa', ipAddr: '20.030.168.17', zone: 'rot', port: '122-133'}
     },
     {
-        id: '12', state: 'Implemented',
+        id: '12', state: 'Implemented', systemEnvironment: 'INTEGRATION_SYSTEM',
         source: {group: 'SZP', host: 'swbwz', ipAddr: '10.100.128.18', zone: 'rot'},
         destination: {group: 'SZD', host: 'swbwz', ipAddr: '20.030.168.17', zone: 'gelb', port: '16000'}
     },
     {
-        id: '13', state: 'Implemented',
+        id: '13', state: 'Implemented', systemEnvironment: 'TEST_SYSTEM',
         source: {group: 'SZP', host: 'swawz', ipAddr: '10.100.127.18', zone: 'orange'},
         destination: {group: 'SZD', host: 'bwawa', ipAddr: '20.030.168.17', zone: 'rot', port: '8080'}
     },
     {
-        id: '14', state: 'Deleted',
+        id: '14', state: 'Deleted', systemEnvironment: 'DEVELOPMENT_SYSTEM',
         source: {group: 'SZP', host: 'swawz', ipAddr: '10.100.127.18', zone: 'orange'},
         destination: {group: 'SZD', host: 'bwawa', ipAddr: '20.030.168.17', zone: 'gelb', port: '8080, 8088'}
     },
     {
-        id: '15', state: 'Pending',
+        id: '15', state: 'To be implemented',  systemEnvironment: 'PRODUCTION_SYSTEM',
         source: {group: 'SZP', host: 'swawz', ipAddr: '10.100.127.18', zone: 'braun'},
         destination: {group: 'SZD', host: 'bwawa', ipAddr: '20.030.168.17', zone: 'rot', port: '10'}
     },
 
     {
-        id: '16', state: 'Pending',
+        id: '16', state: 'To be implemented', systemEnvironment: 'PRODUCTION_SYSTEM',
         source: {group: 'SZP', host: 'swawz', ipAddr: '10.100.127.18', zone: 'braun'},
         destination: {group: 'SZD', host: 'bwawa', ipAddr: '20.030.168.17', zone: 'rot', port: '122-133'}
     },
     {
-        id: '17', state: 'Implemented',
+        id: '17', state: 'Implemented', systemEnvironment: 'INTEGRATION_SYSTEM',
         source: {group: 'SZP', host: 'swbwz', ipAddr: '10.100.128.18', zone: 'rot'},
         destination: {group: 'SZD', host: 'swbwz', ipAddr: '20.030.168.17', zone: 'gelb', port: '16000'}
     },
     {
-        id: '18', state: 'Implemented',
+        id: '18', state: 'Implemented', systemEnvironment: 'TEST_SYSTEM',
         source: {group: 'SZP', host: 'swawz', ipAddr: '10.100.127.18', zone: 'orange'},
         destination: {group: 'SZD', host: 'bwawa', ipAddr: '20.030.168.17', zone: 'rot', port: '8080'}
     },
     {
-        id: '19', state: 'Deleted',
+        id: '19', state: 'Deleted', systemEnvironment: 'INTEGRATION_SYSTEM',
         source: {group: 'SZP', host: 'swawz', ipAddr: '10.100.127.18', zone: 'orange'},
         destination: {group: 'SZD', host: 'bwawa', ipAddr: '20.030.168.17', zone: 'gelb', port: '8080, 8088'}
     },
     {
-        id: '20', state: 'Pending',
+        id: '20', state: 'To be implemented', systemEnvironment: 'PRODUCTION_SYSTEM',
         source: {group: 'SZP', host: 'swawz', ipAddr: '10.100.127.18', zone: 'braun'},
         destination: {group: 'SZD', host: 'bwawa', ipAddr: '20.030.168.17', zone: 'rot', port: '10'}
     },
 
     {
-        id: '21', state: 'Pending',
+        id: '21', state: 'To be implemented', systemEnvironment: 'DEVELOPMENT_SYSTEM',
         source: {group: 'SZP', host: 'swawz', ipAddr: '10.100.127.18', zone: 'braun'},
         destination: {group: 'SZD', host: 'bwawa', ipAddr: '20.030.168.17', zone: 'rot', port: '122-133'}
     },
     {
-        id: '22', state: 'Implemented',
+        id: '22', state: 'Implemented', systemEnvironment: 'TEST_SYSTEM',
         source: {group: 'SZP', host: 'swbwz', ipAddr: '10.100.128.18', zone: 'rot'},
         destination: {group: 'SZD', host: 'swbwz', ipAddr: '20.030.168.17', zone: 'gelb', port: '16000'}
     },
     {
-        id: '23', state: 'Implemented',
+        id: '23', state: 'Implemented', systemEnvironment: 'PRODUCTION_SYSTEM',
         source: {group: 'SZP', host: 'swawz', ipAddr: '10.100.127.18', zone: 'orange'},
         destination: {group: 'SZD', host: 'bwawa', ipAddr: '20.030.168.17', zone: 'rot', port: '8080'}
     },
     {
-        id: '24', state: 'Deleted',
+        id: '24', state: 'Deleted', systemEnvironment: 'DEVELOPMENT_SYSTEM',
         source: {group: 'SZP', host: 'swawz', ipAddr: '10.100.127.18', zone: 'orange'},
         destination: {group: 'SZD', host: 'bwawa', ipAddr: '20.030.168.17', zone: 'gelb', port: '8080, 8088'}
     },
     {
-        id: '25', state: 'Pending',
+        id: '25', state: 'To be implemented', systemEnvironment: 'INTEGRATION_SYSTEM',
         source: {group: 'SZP', host: 'swawz', ipAddr: '10.100.127.18', zone: 'braun'},
         destination: {group: 'SZD', host: 'bwawa', ipAddr: '20.030.168.17', zone: 'rot', port: '10'}
     },
 
     {
-        id: '26', state: 'Pending',
+        id: '26', state: 'To be implemented', systemEnvironment: 'TEST_SYSTEM',
         source: {group: 'SZP', host: 'swawz', ipAddr: '10.100.127.18', zone: 'braun'},
         destination: {group: 'SZD', host: 'bwawa', ipAddr: '20.030.168.17', zone: 'rot', port: '122-133'}
     },
     {
-        id: '27', state: 'Implemented',
+        id: '27', state: 'Implemented', systemEnvironment: 'INTEGRATION_SYSTEM',
         source: {group: 'SZP', host: 'swbwz', ipAddr: '10.100.128.18', zone: 'rot'},
         destination: {group: 'SZD', host: 'swbwz', ipAddr: '20.030.168.17', zone: 'gelb', port: '16000'}
     },
     {
-        id: '28', state: 'Implemented',
+        id: '28', state: 'Implemented', systemEnvironment: 'DEVELOPMENT_SYSTEM',
         source: {group: 'SZP', host: 'swawz', ipAddr: '10.100.127.18', zone: 'orange'},
         destination: {group: 'SZD', host: 'bwawa', ipAddr: '20.030.168.17', zone: 'rot', port: '8080'}
     },
     {
-        id: '29', state: 'Deleted',
+        id: '29', state: 'Deleted', systemEnvironment: 'PRODUCTION_SYSTEM',
         source: {group: 'SZP', host: 'swawz', ipAddr: '10.100.127.18', zone: 'orange'},
         destination: {group: 'SZD', host: 'bwawa', ipAddr: '20.030.168.17', zone: 'gelb', port: '8080, 8088'}
     },
     {
-        id: '30', state: 'Pending',
+        id: '30', state: 'To be implemented', systemEnvironment: 'TEST_SYSTEM',
         source: {group: 'SZP', host: 'swawz', ipAddr: '10.100.127.18', zone: 'braun'},
         destination: {group: 'SZD', host: 'bwawa', ipAddr: '20.030.168.17', zone: 'rot', port: '10'}
     },
 
     {
-        id: '31', state: 'Pending',
+        id: '31', state: 'To be implemented', systemEnvironment: 'PRODUCTION_SYSTEM',
         source: {group: 'SZP', host: 'swawz', ipAddr: '10.100.127.18', zone: 'braun'},
         destination: {group: 'SZD', host: 'bwawa', ipAddr: '20.030.168.17', zone: 'rot', port: '122-133'}
     },
     {
-        id: '32', state: 'Implemented',
+        id: '32', state: 'Implemented', systemEnvironment: 'PRODUCTION_SYSTEM',
         source: {group: 'SZP', host: 'swbwz', ipAddr: '10.100.128.18', zone: 'rot'},
         destination: {group: 'SZD', host: 'swbwz', ipAddr: '20.030.168.17', zone: 'gelb', port: '16000'}
     },
     {
-        id: '33', state: 'Implemented',
+        id: '33', state: 'Implemented', systemEnvironment: 'TEST_SYSTEM',
         source: {group: 'SZP', host: 'swawz', ipAddr: '10.100.127.18', zone: 'orange'},
         destination: {group: 'SZD', host: 'bwawa', ipAddr: '20.030.168.17', zone: 'rot', port: '8080'}
     },
     {
-        id: '34', state: 'Deleted',
+        id: '34', state: 'Deleted', systemEnvironment: 'DEVELOPMENT_SYSTEM',
         source: {group: 'SZP', host: 'swawz', ipAddr: '10.100.127.18', zone: 'orange'},
         destination: {group: 'SZD', host: 'bwawa', ipAddr: '20.030.168.17', zone: 'gelb', port: '8080, 8088'}
     },
     {
-        id: '35', state: 'Pending',
+        id: '35', state: 'To be implemented', systemEnvironment: 'INTEGRATION_SYSTEM',
         source: {group: 'SZP', host: 'swawz', ipAddr: '10.100.127.18', zone: 'braun'},
         destination: {group: 'SZD', host: 'bwawa', ipAddr: '20.030.168.17', zone: 'rot', port: '10'}
     },
 
     {
-        id: '36', state: 'Pending',
+        id: '36', state: 'To be implemented', systemEnvironment: 'DEVELOPMENT_SYSTEM',
         source: {group: 'SZP', host: 'swawz', ipAddr: '10.100.127.18', zone: 'braun'},
         destination: {group: 'SZD', host: 'bwawa', ipAddr: '20.030.168.17', zone: 'rot', port: '122-133'}
     },
     {
-        id: '37', state: 'Implemented',
+        id: '37', state: 'Implemented', systemEnvironment: 'TEST_SYSTEM',
         source: {group: 'SZP', host: 'swbwz', ipAddr: '10.100.128.18', zone: 'rot'},
         destination: {group: 'SZD', host: 'swbwz', ipAddr: '20.030.168.17', zone: 'gelb', port: '16000'}
     },
     {
-        id: '38', state: 'Implemented',
+        id: '38', state: 'Implemented', systemEnvironment: 'INTEGRATION_SYSTEM',
         source: {group: 'SZP', host: 'swawz', ipAddr: '10.100.127.18', zone: 'orange'},
         destination: {group: 'SZD', host: 'bwawa', ipAddr: '20.030.168.17', zone: 'rot', port: '8080'}
     },
     {
-        id: '39', state: 'Deleted',
+        id: '39', state: 'Deleted', systemEnvironment: 'DEVELOPMENT_SYSTEM',
         source: {group: 'SZP', host: 'swawz', ipAddr: '10.100.127.18', zone: 'orange'},
         destination: {group: 'SZD', host: 'bwawa', ipAddr: '20.030.168.17', zone: 'gelb', port: '8080, 8088'}
     },
     {
-        id: '40', state: 'Pending',
+        id: '40', state: 'To be implemented', systemEnvironment: 'TEST_SYSTEM',
         source: {group: 'SZP', host: 'swawz', ipAddr: '10.100.127.18', zone: 'braun'},
         destination: {group: 'SZD', host: 'bwawa', ipAddr: '20.030.168.17', zone: 'rot', port: '10'}
     },
 
     {
-        id: '41', state: 'Pending',
+        id: '41', state: 'To be implemented', systemEnvironment: 'PRODUCTION_SYSTEM',
         source: {group: 'SZP', host: 'swawz', ipAddr: '10.100.127.18', zone: 'braun'},
         destination: {group: 'SZD', host: 'bwawa', ipAddr: '20.030.168.17', zone: 'rot', port: '122-133'}
     },
     {
-        id: '42', state: 'Implemented',
+        id: '42', state: 'Implemented', systemEnvironment: 'INTEGRATION_SYSTEM',
         source: {group: 'SZP', host: 'swbwz', ipAddr: '10.100.128.18', zone: 'rot'},
         destination: {group: 'SZD', host: 'swbwz', ipAddr: '20.030.168.17', zone: 'gelb', port: '16000'}
     },
     {
-        id: '43', state: 'Implemented',
+        id: '43', state: 'Implemented', systemEnvironment: 'PRODUCTION_SYSTEM',
         source: {group: 'SZP', host: 'swawz', ipAddr: '10.100.127.18', zone: 'orange'},
         destination: {group: 'SZD', host: 'bwawa', ipAddr: '20.030.168.17', zone: 'rot', port: '8080'}
     },
     {
-        id: '44', state: 'Deleted',
+        id: '44', state: 'Deleted', systemEnvironment: 'DEVELOPMENT_SYSTEM',
         source: {group: 'SZP', host: 'swawz', ipAddr: '10.100.127.18', zone: 'orange'},
         destination: {group: 'SZD', host: 'bwawa', ipAddr: '20.030.168.17', zone: 'gelb', port: '8080, 8088'}
     },
     {
-        id: '45', state: 'Pending',
+        id: '45', state: 'To be implemented', systemEnvironment: 'INTEGRATION_SYSTEM',
         source: {group: 'SZP', host: 'swawz', ipAddr: '10.100.127.18', zone: 'braun'},
         destination: {group: 'SZD', host: 'bwawa', ipAddr: '20.030.168.17', zone: 'rot', port: '10'}
     }
