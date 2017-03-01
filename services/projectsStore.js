@@ -127,7 +127,7 @@ function publicAddUserToProjectPr(projectId, userId) {
  * @param id
  */
 function publicDeleteProjectPr(id) {
-    db.remove({ _id: id }, {})
+    return db.remove({ _id: id }, {})
         .then(function(foundDoc){
             console.log("Delete Project", "id", id, "found", foundDoc);
             return Promise.resolve(id);
