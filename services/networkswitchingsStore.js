@@ -1,6 +1,15 @@
 "use strict";
 
 var Promise = require('promise');
+const winston = require('winston');
+
+var LOG_LABEL = 'networkswitchings-store';
+winston.loggers.add(LOG_LABEL, {
+    console: {
+        label: LOG_LABEL
+    }
+});
+var log = winston.loggers.get(LOG_LABEL);
 
 
 /**
@@ -34,7 +43,7 @@ function publicGetNetworkswitchingsPr(query, offset, limit, sorting) {
         sorting = { "id": 1 }; // sort by id ascending
     }
 
-    console.log("networkswitchingsStore, sorting=" + JSON.stringify(sorting) + ", offset=" + offset + ", limit=" + limit);
+    log.info("publicGetNetworkswitchingsPr, sorting=", JSON.stringify(sorting), ", offset=", offset, ", limit=", limit);
 
     return db.cfind(query)
         .sort(sorting)
@@ -54,7 +63,7 @@ function publicGetNetworkswitchingsPr(query, offset, limit, sorting) {
 function publicGetNetworkswitchingPr(nwswId) {
     return db.findOne({ _id: nwswId })
         .then(function(foundDoc){
-            console.log("networkswitchingsStore.publicGetNetworkswitching", "id", nwswId, "found", foundDoc);
+            log.info("publicGetNetworkswitching", "id", nwswId, "found", foundDoc);
             return Promise.resolve(foundDoc);
         });
 }
@@ -68,7 +77,7 @@ function publicSaveNetworkswitchingPr(nwsw) {
     return db.update({_id: nwsw._id}, nwsw, {}/*options*/)
         .then(function(numReplaced) {
             if (numReplaced) {
-                console.log('Documents updated: ', numReplaced);
+                log.info('publicSaveNetworkswitchingPr, Documents updated: ', numReplaced);
             }
             return Promise.resolve(numReplaced);
         });
@@ -83,7 +92,7 @@ function publicInsertNetworkswitchingPr(nwsw) {
     return db.insert(nwsw)
         .then(function(newDoc) {
             if (newDoc) {
-                console.log('Documents inserted: ', newDoc);
+                log.info('Documents inserted: ', newDoc);
             }
             return Promise.resolve(newDoc);
         });
@@ -97,7 +106,7 @@ function publicInsertNetworkswitchingPr(nwsw) {
 function publicDeleteNetworkswitchingPr(id) {
     return db.remove({ _id: id }, {})
         .then(function(foundDoc){
-            console.log("networkswitchingsStore.publicDeleteNetworkswitching", "id", id, "found", foundDoc);
+            log.info("publicDeleteNetworkswitchingPr", "id", id, "found", foundDoc);
             return foundDoc;
         });
 }
@@ -110,7 +119,7 @@ function publicDeleteNetworkswitchingPr(id) {
 function publicDeleteNetworkswitchingsByProjectPr(projectId) {
     return db.remove({ projectId: projectId }, {})
         .then(function(foundDocs){
-            console.log("networkswitchingsStore.publicDeleteNetworkswitchingsByProjectPr", "projectId", projectId, "founds", foundDocs);
+            log.info("publicDeleteNetworkswitchingsByProjectPr", "projectId", projectId, "founds", foundDocs);
             return foundDocs;
         });
 }

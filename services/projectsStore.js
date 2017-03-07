@@ -6,10 +6,18 @@
  * their network switchings.
  */
 
-
+const winston = require('winston');
 var Promise = require('promise');
-
 var Datastore = require('nedb-promise');
+
+var LOG_LABEL = 'projects-store';
+winston.loggers.add(LOG_LABEL, {
+    console: {
+        label: LOG_LABEL
+    }
+});
+var log = winston.loggers.get(LOG_LABEL);
+
 var db = new Datastore({ filename: './data/projects.db', autoload: true });
 
 // set index on 'adminId' since this is mostly requested
@@ -35,7 +43,7 @@ function publicCheckProjectExists(projectId) {
 function publicGetProjectByIdPr(projectId) {
     return db.findOne({ _id: projectId })
         .then(function(foundDoc){
-            console.log("projectsStore.publicGetProjectByIdPr", "_id", projectId, "found", foundDoc);
+            log.info("publicGetProjectByIdPr", "_id", projectId, "found", foundDoc);
             return Promise.resolve(foundDoc);
         });
 
@@ -54,7 +62,7 @@ function publicGetProjectsByUserIdPr(userId) {
             var admin = foundDocs.filter(function(doc) { return doc.adminId == userId});
             var users = foundDocs.filter(function(doc) { return doc.adminId != userId});
             foundDocs = admin.concat(users);
-            console.log("projectsStore.publicGetProjectById", "adminId", userId, "found", foundDocs);
+            log.info("publicGetProjectById", "adminId", userId, "found", foundDocs);
             return Promise.resolve(foundDocs);
         });
 }
@@ -67,7 +75,7 @@ function publicGetProjectsByUserIdPr(userId) {
 function publicSaveProjectPr(project) {
     return db.update({_id: project._id}, project, {}/*options*/)
         .then(function(numReplaced) {
-            console.log('Projects updated: ', numReplaced);
+            log.info('publicSaveProjectPr, Projects updated: ', numReplaced);
             return Promise.resolve(project);
         });
 }
@@ -87,7 +95,7 @@ function publicInsertProjectPr(project) {
 
     return db.insert(project).then((newDoc) => {
         if (newDoc) {
-            console.log('Project inserted: ', newDoc);
+            log.info('publicInsertProjectPr, Project inserted: ', newDoc);
         }
         return Promise.resolve(newDoc);
     });
@@ -108,7 +116,7 @@ function publicAddUserToProjectPr(projectId, userId) {
     }
     return db.findOne({ _id: projectId })
         .then(function(project) {
-            console.log("projectsStore.publicGetProjectByUser", "userId", userId, "found", project);
+            log.info("publicAddUserToProjectPr", "userId", userId, "found", project);
 
             if (!project.users) {
                 project.users = [];
@@ -117,7 +125,7 @@ function publicAddUserToProjectPr(projectId, userId) {
                 project.users.push(userId);
                 return publicSaveProjectPr(project);
             }
-            console.log("UserId=" + userId + " already added to project with id=" + projectId + "!");
+            log.info("publicAddUserToProjectPr, UserId=", userId, " already added to project with id=", projectId, "!");
             return Promise.resolve(project);
         });
 }
@@ -129,7 +137,7 @@ function publicAddUserToProjectPr(projectId, userId) {
 function publicDeleteProjectPr(id) {
     return db.remove({ _id: id }, {})
         .then(function(foundDoc){
-            console.log("Delete Project", "id", id, "found", foundDoc);
+            log.info("publicDeleteProjectPr, Delete Project", "id", id, "found", foundDoc);
             return Promise.resolve(id);
         });
 }

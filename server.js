@@ -9,6 +9,21 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var jwt = require('express-jwt');
 var config = require('./config');
+const winston = require('winston');
+
+
+// TODO Enable for production!!!
+// Log.setProductionMode();
+
+
+var LOG_LABEL = 'server-main';
+winston.loggers.add(LOG_LABEL, {
+    console: {
+        label: LOG_LABEL
+    }
+});
+var log = winston.loggers.get(LOG_LABEL);
+
 
 // build up middleware:
 
@@ -20,12 +35,12 @@ function notFound(req, res, next) {
 }
 
 function errorHandler(err, req, res, next) {
-    console.log("Error Handler: err=", err);
+    log.error("Error Handler: err=", err);
     res.status(500).end(err.message);
 }
 
 function logger(req, res, next) {
-    console.log(req.method + ":" + req.url);
+    log.info(req.method + ":" + req.url);
     next();
 }
 

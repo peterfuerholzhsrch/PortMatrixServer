@@ -6,12 +6,21 @@ var usersStore = require("../services/usersStore.js");
 var projectsStore = require("../services/projectsStore.js");
 var networkswitchingsStore = require("../services/networkswitchingsStore.js");
 var security = require("../util/security.js");
+const winston = require('winston');
+var nodemailer = require('nodemailer');
 
-const nodemailer = require('nodemailer');
+var LOG_LABEL = 'users-and-projects-controller';
+winston.loggers.add(LOG_LABEL, {
+    console: {
+        label: LOG_LABEL
+    }
+});
+var log = winston.loggers.get(LOG_LABEL);
 
 var smtpConfig = process.env.PORTMATRIX_SMTP_CONFIG;
 
 if (!smtpConfig) {
+    log.er("smtpConfig is not set!");
     console.log("Please set environment variable PORTMATRIX_SMTP_CONFIG with a value in the following format:");
     console.log("smtps://<smtp-user>:<smtp-password>@<smtp-server>");
     console.log("");
@@ -144,11 +153,11 @@ module.exports.inviteColleagues = function(req, res, next) {
             // send mail with defined transport object
             transporter.sendMail(mailOptions, (error, info) => {
                 if (error) {
-                    console.log(error);
+                    log.er(error);
                     next(error);
                     return;
                 }
-                console.log('Message %s sent: %s', info.messageId, info.response);
+                log.info('Message %s sent: %s', info.messageId, info.response);
             });
             res.end();
         })
@@ -183,7 +192,7 @@ function buildEmailMessage(hostPortString, user, projectId) {
 module.exports.getProject = function (req, res, next) {
     projectsStore.getProjectByIdPr(req.params.projectId)
         .then(function (project) {
-                console.log('ctr.getProject', 'project =', project);
+                log.info('getProject', 'project =', project);
                 res.type('application/json');
                 res.jsonp(project);
                 res.end();
@@ -205,7 +214,7 @@ module.exports.getProjectsByUser = function (req, res, next) {
                     // return admin only:
                     projects = docs.filter(function(doc) { return doc.adminId == req.query.userId });
                 }
-                console.log('ctr.getProjectsByUser', 'projects =', projects);
+                log.info('getProjectsByUser', 'projects =', projects);
                 res.type('application/json');
                 res.jsonp({ data: projects });
                 res.end();
@@ -217,12 +226,12 @@ module.exports.getProjectsByUser = function (req, res, next) {
 
 
 module.exports.saveProject = function (req, res, next) {
-    console.log("usersAndProjectsController", "req.body", req.body);
+    log.d("saveProject", "req.body", req.body);
 
     projectsStore.saveProjectPr(req.body)
         .then(
             function (doc) {
-                console.log('ctr.saveProject', 'doc =', doc);
+                log.info('saveProject', 'doc =', doc);
                 res.type('application/json');
                 res.jsonp(doc);
                 res.end();
@@ -244,7 +253,7 @@ module.exports.deleteProject = function (req, res, next) {
 
 
 function deleteNetworkswitchingsAndProjectPr(projectId) {
-    console.log("usersAndProjectsController", "projectId", projectId);
+    log.info("deleteNetworkswitchingsAndProjectPr", "projectId", projectId);
 
     return networkswitchingsStore.deleteNetworkswitchingsByProjectPr(projectId)
         .then(function(ok) {

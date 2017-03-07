@@ -7,6 +7,15 @@
 
 var store = require("../services/networkswitchingsStore.js");
 var projectsStore = require("../services/projectsStore.js");
+const winston = require('winston');
+
+var LOG_LABEL = 'networkswitching-controller';
+winston.loggers.add(LOG_LABEL, {
+    console: {
+        label: LOG_LABEL
+    }
+});
+var log = winston.loggers.get(LOG_LABEL);
 
 
 /**
@@ -43,7 +52,7 @@ module.exports.getNetworkswitchings = function (req, res) {
     var sort = req.query.sort;
     var q = req.query.q;
 
-    console.log("q=" + q + ", offset=" + offset + ", limit=" + limit + ", sort-parameters=" + sort);
+    log.info("getNetworkswitchings q=", q, ", offset=", offset, ", limit=", limit, ", sort-parameters=", sort);
 
     // handle offset & limit:
     if (offset) {
@@ -145,7 +154,7 @@ module.exports.getNetworkswitchings = function (req, res) {
             return store.getNetworkswitchingsPr(query, offset, limit, sortings)
         })
         .then(function (docs) {
-            console.log('ctr.getNetworkswitchings', 'number of docs =', docs ? docs.length : 0);
+            log.info('checkProjectExists', 'number of docs =', docs ? docs.length : 0);
             res.type('application/json');
             // pack array into data-objects (see https://angular.io/docs/ts/latest/guide/server-communication.html#!#in-mem-web-api)
             res.jsonp({data: docs});
@@ -161,7 +170,7 @@ module.exports.getNetworkswitchings = function (req, res) {
  * @param next
  */
 module.exports.getNetworkswitching = function (req, res, next) {
-    console.log("getNetworkswitching", "req.body", req.body);
+    log.info("getNetworkswitching", "req.body", req.body);
 
     projectsStore.checkProjectExists(req.params.projectId)
         .then(function() {
@@ -169,7 +178,7 @@ module.exports.getNetworkswitching = function (req, res, next) {
             return store.getNetworkswitchingPr(req.params.id)
         })
         .then(function (doc) {
-            console.log('ctr.getNetworkswitching', 'doc =', doc);
+            log.info('getNetworkswitching', 'doc =', doc);
             res.type('application/json');
             res.jsonp(doc);
             res.end()
@@ -179,7 +188,7 @@ module.exports.getNetworkswitching = function (req, res, next) {
 
 
 module.exports.saveNetworkswitching = function (req, res, next) {
-    console.log("saveNetworkswitching", "req.body", req.body);
+    log.info("saveNetworkswitching", "req.body", req.body);
 
     var projectId = req.params.projectId;
     projectsStore.checkProjectExists(projectId)
@@ -191,7 +200,7 @@ module.exports.saveNetworkswitching = function (req, res, next) {
             return store.saveNetworkswitchingPr(req.body)
         })
         .then(function (doc) {
-            console.log('ctr.saveNetworkswitching', 'doc =', doc);
+            log.info('saveNetworkswitching', 'doc =', doc);
             res.type('application/json');
             res.jsonp(doc);
             res.end();
@@ -201,7 +210,7 @@ module.exports.saveNetworkswitching = function (req, res, next) {
 
 
 module.exports.insertNetworkswitching = function (req, res, next) {
-    console.log("insertNetworkswitching", "req.body", req.body);
+    log.info("insertNetworkswitching", "req.body", req.body);
 
     var projectId = req.params.projectId;
     projectsStore.checkProjectExists(projectId)
@@ -214,7 +223,7 @@ module.exports.insertNetworkswitching = function (req, res, next) {
             return store.insertNetworkswitchingPr(req.body)
         })
         .then(function (doc) {
-            console.log('ctr.insertNetworkswitching', 'doc =', doc);
+            log.info('insertNetworkswitching', 'doc =', doc);
             res.type('application/json');
             res.jsonp(doc);
             res.end();
@@ -235,7 +244,7 @@ module.exports.deleteNetworkswitching = function (req, res, next) {
             return store.deleteNetworkswitchingPr(req.params.id)
         })
         .then(function (doc) {
-            console.log('ctr.deleteNetworkswitching', 'doc =', doc);
+            log.info('deleteNetworkswitching', 'doc =', doc);
             res.type('application/json');
             res.jsonp(doc);
             res.end();

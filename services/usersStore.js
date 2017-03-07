@@ -8,7 +8,15 @@
 const crypto = require('crypto');
 const cryptoUtil = require('../util/cryptoUtil');
 var Promise = require('promise');
+const winston = require('winston');
 
+var LOG_LABEL = 'users-store';
+winston.loggers.add(LOG_LABEL, {
+    console: {
+        label: LOG_LABEL
+    }
+});
+var log = winston.loggers.get(LOG_LABEL);
 
 var Datastore = require('nedb-promise');
 var db = new Datastore({ filename: './data/users.db', autoload: true });
@@ -40,7 +48,7 @@ function publicRegisterUserPr(email, password)
     return db.insert(user)
         .then(function (newDoc) {
             if (newDoc) {
-                console.log('User inserted: ', newDoc);
+                log.info('User inserted: ', newDoc);
             }
             return Promise.resolve(newDoc);
         });
