@@ -8,6 +8,7 @@ var networkswitchingsStore = require("../services/networkswitchingsStore.js");
 var security = require("../util/security.js");
 const winston = require('winston');
 var nodemailer = require('nodemailer');
+var app = require('../server');
 
 var LOG_LABEL = 'users-and-projects-controller';
 winston.loggers.add(LOG_LABEL, {
@@ -17,10 +18,10 @@ winston.loggers.add(LOG_LABEL, {
 });
 var log = winston.loggers.get(LOG_LABEL);
 
-var smtpConfig = process.env.PORTMATRIX_SMTP_CONFIG;
+var smtpConfig = app.settings.smtpConfig;
 
 if (!smtpConfig) {
-    log.er("smtpConfig is not set!");
+    log.error("smtpConfig is not set!");
     console.log("Please set environment variable PORTMATRIX_SMTP_CONFIG with a value in the following format:");
     console.log("smtps://<smtp-user>:<smtp-password>@<smtp-server>");
     console.log("");
@@ -153,13 +154,13 @@ module.exports.inviteColleagues = function(req, res, next) {
             // send mail with defined transport object
             transporter.sendMail(mailOptions, (error, info) => {
                 if (error) {
-                    log.er(error);
+                    log.error(error);
                     next(error);
                     return;
                 }
                 log.info('Message %s sent: %s', info.messageId, info.response);
+                res.end();
             });
-            res.end();
         })
         .catch(function (error) {
             next(error);
