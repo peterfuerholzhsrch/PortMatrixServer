@@ -57,3 +57,5 @@ heroku open
 # show logs
 heroku logs --tail
 
+# browse content
+heroku run bash
