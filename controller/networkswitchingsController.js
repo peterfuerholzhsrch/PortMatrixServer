@@ -25,18 +25,18 @@ var log = winston.loggers.get(LOG_LABEL);
  *     <li>sort=[+-]&lt;colum-name1&gt;[,[+-]&lt;column-name2&gt;]*</li>
  *     <li>offset=&lt;number&gt;</li>
  *     <li>limit=&lt;number&gt;</li>
- *     <li>q=<value> This value is sought in every column. The data typing occurs under following rules:
+ *     <li>q=<value> This value is tokenized by white-space. Every token is sought in every column. Since column types
+ *          are different search values are converted where possible. Following rules apply:
  *          <ul>
- *              <li>string: enclose by '' or ""</li>
- *              <li>boolean: true / false</li>
- *              <li>number: no enclosing, just as decimal values (divider?)</li>
- *              <li>date: in format provided by new Date().toString() or toUTCString()</li>
+ *              <li>string: looked up if contained in column value; case-insensitive</li>
+ *              <li>boolean: if token is 'true' or 'false' (case-insensitive)</li>
+ *              <li>number: if Number.parseInt() returned valid value</li>
+ *              <li>date: string value must be provided in as returned by new Date().toString() or toUTCString()</li>
  *          </ul>
  *          If the value sought is a string it is sought as substring, other data types must match the whole field. When
  *          the database field is not of type 'string' the string value is tried to convert to the target type.
  *
- *
- *         TODO For further study:
+ *         For further study:
  *         AND: q=&lt;colum-name1&gt;:'<value1>',&lt;colum-name2&gt;:'<value2>' OR:
  *         q=OR(&lt;colum-name1&gt;:'<value1>',&lt;colum-name2&gt;:'<value2>') (further combinations are possible)
  * </ul>
@@ -89,64 +89,9 @@ module.exports.getNetworkswitchings = function (req, res) {
     var query = { projectId: req.params.projectId };
 
     // handle query:
-    if (q && q.trim()) {
-        q = q.trim();
-
-        // searchString contains the value to seek in string-typed columns, searchBoolean for booleans, searchDate for
-        // date and searchNumber for integer numbers.
-        var searchString = q;
-        var searchBoolean = null;
-        var searchDate = null;
-        var searchInt = null;
-
-        var strRegex = new RegExp(/^['"].*['"]$/g);
-        var booleanRegex = new RegExp(/^(true|false)$/gi);
-        if (strRegex.test(q)) {
-            // remove ''/"":
-            q = q.slice(1, q.length-1);
-            // enclosed by '' or ""n -> string; made Regex of (-> /q/) -> implements 'contains' behaviour
-            searchString = new RegExp(q);
-        }
-        if (booleanRegex.test(q)) {
-            searchBoolean = q.toLowerCase() == 'true';
-        }
-        // try to convert to number
-        var nb = Number.parseInt(q);
-        if (!isNaN(nb)) {
-            searchInt = nb;
-        }
-        // try to convert to date (see http://stackoverflow.com/questions/1353684/detecting-an-invalid-date-date-instance-in-javascript):
-        var presumableDate = new Date(q);
-        if (Object.prototype.toString.call(presumableDate) === "[object Date]" ) {
-            // it is a date
-            if (!isNaN(presumableDate.getTime())) {
-                searchDate = presumableDate;
-            }
-        }
-
-        if (searchString) {
-            query['$or'] = [
-                    {id: searchString},
-                    {state: searchString},
-                    {protocol: searchString},
-                    {remark: searchString},
-                    {test_state: searchString},  // TODO does not yet exist
-                    {['source.group']: searchString},
-                    {['source.host']: searchString},
-                    {['source.ipAddr']: searchString},
-                    {['source.zone']: searchString},
-                    {['destination.group']: searchString},
-                    {['destination.host']: searchString},
-                    {['destination.ipAddr']: searchString},
-                    {['destination.zone']: searchString},
-                    {['destination.port']: searchString}
-                ];
-            // // search for integral number:
-            // if (searchInt) {
-            //    query.$or.push({ <integer column>: searchInt });
-            // }
-            // TODO search for creation date, last test date -> searchDate
-        }
+    var queryArray = handleQueryString(q);
+    if (queryArray) {
+        query['$and'] = queryArray;
     }
 
     projectsStore.checkProjectExists(req.params.projectId)
@@ -162,6 +107,92 @@ module.exports.getNetworkswitchings = function (req, res) {
         })
         .catch(function(err) { next(err); });
 };
+
+
+/**
+ * @param queryString string containing the tokens to look up (whitespace separated); nwsw has to contain all tokens.
+ * @returns {*} list of query objects, null if query is empty
+ */
+function handleQueryString(queryString) {
+    if (!queryString || !queryString.trim()) {
+        return null;
+    }
+    queryString = queryString.trim();
+    var queryList = queryString.split(/\s/); // split by white-spaces
+
+    var subqueries = [];
+    for (var queryToken of queryList) {
+        // searchString contains the value to seek in string-typed columns, searchBoolean for booleans, searchDate for
+        // date and searchNumber for integer numbers.
+        var searchString = queryToken;
+        var searchBoolean = null;
+        var searchDate = null;
+        var searchInt = null;
+        var booleanRegex = new RegExp(/^(true|false)$/gi);
+
+        searchString = new RegExp(queryToken, "i");
+        if (booleanRegex.test(queryToken)) {
+            searchBoolean = new Boolean(queryToken.toLowerCase() == 'true');
+        }
+        // try to convert to number
+        var nb = Number.parseInt(queryToken);
+        if (!isNaN(nb)) {
+            searchInt = nb;
+        }
+        // try to convert to date (see http://stackoverflow.com/questions/1353684/detecting-an-invalid-date-date-instance-in-javascript):
+        var presumableDate = new Date(queryToken);
+        if (Object.prototype.toString.call(presumableDate) === "[object Date]") {
+            // it is a date
+            if (!isNaN(presumableDate.getTime())) {
+                searchDate = presumableDate;
+            }
+        }
+
+        if (searchString) {
+            var subquery = {
+                ['$or']: [
+                    {id: searchString},
+                    {state: searchString},
+                    {protocol: searchString},
+                    {remark: searchString},
+                    {['source.group']: searchString},
+                    {['source.host']: searchString},
+                    {['source.ipAddr']: searchString},
+                    {['source.zone']: searchString},
+                    {['destination.group']: searchString},
+                    {['destination.host']: searchString},
+                    {['destination.ipAddr']: searchString},
+                    {['destination.zone']: searchString},
+                    {['destination.port']: searchString}
+                ]
+            };
+            if (searchBoolean != null) {
+                subquery.$or.push({['testresultList.result']: searchBoolean.valueOf()});
+            }
+            // // search for integral number (Currently we don't need that):
+            // if (searchInt) {
+            //    subquery.$or.push({ <integer column>: searchInt });
+            // }
+            if (searchDate) {
+                // see http://stackoverflow.com/questions/8835757/return-query-based-on-date
+                var dateMidnight = new Date(searchDate);
+                dateMidnight.setHours(23);
+                dateMidnight.setMinutes(59);
+                dateMidnight.setSeconds(59);
+                var dateQuery = {['$gt']: searchDate.toISOString(), ['$lt']: dateMidnight.toISOString()};
+
+                subquery.$or = subquery.$or.concat([
+                    {creationDate: dateQuery},
+                    {lastchangeDate: dateQuery},
+                    {['testresultList.timestamp']: dateQuery}
+                ]);
+            }
+
+            subqueries.push(subquery);
+        }
+    }
+    return subqueries;
+}
 
 
 /**

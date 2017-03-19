@@ -13,10 +13,6 @@ const winston = require('winston');
 var fs = require('fs');
 
 
-// TODO Enable for production!!!
-// Log.setProductionMode();
-
-
 var LOG_LABEL = 'server-main';
 winston.loggers.add(LOG_LABEL, {
     console: {
@@ -90,6 +86,7 @@ app.use(express.static(__dirname + '/public'));
 
 app.use(function(req, res, next) {
     // just provide index.html (without changing the URL -> URL incl. query will be preserved!):
+    // see http://stackoverflow.com/questions/7268033/basic-static-file-server-in-nodejs
     res.writeHead(200, {'Content-Type': "text/html"});
     var fileStream = fs.createReadStream(__dirname + '/public/index.html');
     fileStream.pipe(res);
