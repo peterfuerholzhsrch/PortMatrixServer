@@ -79,7 +79,7 @@ function publicSaveNetworkswitchingPr(nwsw) {
             if (numReplaced) {
                 log.info('publicSaveNetworkswitchingPr, Documents updated: ', numReplaced);
             }
-            return Promise.resolve(numReplaced);
+            return Promise.resolve(nwsw);
         });
 }
 
@@ -107,7 +107,7 @@ function publicDeleteNetworkswitchingPr(id) {
     return db.remove({ _id: id }, {})
         .then(function(foundDoc){
             log.info("publicDeleteNetworkswitchingPr", "id", id, "found", foundDoc);
-            return foundDoc;
+            return Promise.resolve(foundDoc);
         });
 }
 
@@ -120,7 +120,7 @@ function publicDeleteNetworkswitchingsByProjectPr(projectId) {
     return db.remove({ projectId: projectId }, {})
         .then(function(foundDocs){
             log.info("publicDeleteNetworkswitchingsByProjectPr", "projectId", projectId, "founds", foundDocs);
-            return foundDocs;
+            return Promise.resolve(foundDocs);
         });
 }
 
