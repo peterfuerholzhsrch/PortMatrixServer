@@ -1,6 +1,6 @@
 # PortMatrixServer []()
 
-This is the server project of the PortMatrix web application. See under the PortMatrix sibling project about a general overview.
+This is the server project of the [PortMatrix](https://github.com/peterfuerholzhsrch/PortMatrix) web application. See under the PortMatrix sibling project about a general overview.
 
 ## File Overview
  

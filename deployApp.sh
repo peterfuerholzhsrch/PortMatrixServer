@@ -1,3 +1,8 @@
+#! /bin/sh
+#
+# !!! for Linux and OS X !!!
+#
+
 #
 # Following script can be used when PortMatrix shall be run on the HEROKU cloud.
 # You need a free Heroku account on www.heroku.com.
