@@ -1,8 +1,8 @@
 "use strict";
+
+
 /**
- * Created by pfu on 26/10/16.
- *
- * The router module.
+ * The network switchings router module.
  */
 
 var express = require('express');

@@ -1,8 +1,7 @@
 "use strict";
+
 /**
- * Created by pfu on 26/10/16.
- *
- * The router module.
+ * The users router module where the user needs no authentication.
  */
 
 var express = require('express');

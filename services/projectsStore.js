@@ -1,7 +1,6 @@
 "use strict";
+
 /**
- * Created by pfu on 26/10/16.
- *
  * The project store (= persistence layer). A project combines an admin (type User), his coworkers (type User) with
  * their network switchings.
  */
@@ -37,6 +36,7 @@ function publicCheckProjectExists(projectId) {
 
 
 /**
+ * Get project be projectId
  * @param projectId
  * @returns {*|Promise.<TResult>}
  */
@@ -51,6 +51,8 @@ function publicGetProjectByIdPr(projectId) {
 
 
 /**
+ * Get projects by userId. The projects are sorted that the projects are returned first where the user is admin (=owner)
+ * and then where he is user only.
  * @param userId
  * @returns {*|Promise.<TResult>}
  */
@@ -69,6 +71,7 @@ function publicGetProjectsByUserIdPr(userId) {
 
 
 /**
+ * Updates a project.
  * @param project
  * @returns {*|Promise.<TResult>}
  */
@@ -82,6 +85,7 @@ function publicSaveProjectPr(project) {
 
 
 /**
+ * Creates a projects.
  * @param project
  * @returns {*|Promise.<TResult>}
  */
@@ -103,6 +107,7 @@ function publicInsertProjectPr(project) {
 
 
 /**
+ * Adds a user to an existing project.
  * @param projectId
  * @param userId
  * @returns {*|Promise.<TResult>}
@@ -132,6 +137,7 @@ function publicAddUserToProjectPr(projectId, userId) {
 
 
 /**
+ * Deletes a project.
  * @param id
  */
 function publicDeleteProjectPr(id) {

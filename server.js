@@ -1,8 +1,7 @@
 "use strict";
+
 /**
- * Created by pfu on 26/10/16.
- *
- * Express server main functions.
+ * Express server main module.
  */
 
 var express = require('express');
@@ -81,7 +80,7 @@ apiRouter.use(errorHandler);
 
 app.use('/api', apiRouter);
 
-// all other calls shall be handled as static (non-REST-calls):
+// all other calls shall be handled as static (non-REST) calls:
 app.use(express.static(__dirname + '/public'));
 
 app.use(function(req, res, next) {

@@ -1,8 +1,13 @@
 "use strict";
 
+/**
+ * The network switching store (= persistence layer).
+ */
+
 var Promise = require('promise');
 const winston = require('winston');
 
+// configure log
 var LOG_LABEL = 'networkswitchings-store';
 winston.loggers.add(LOG_LABEL, {
     console: {
@@ -11,12 +16,6 @@ winston.loggers.add(LOG_LABEL, {
 });
 var log = winston.loggers.get(LOG_LABEL);
 
-
-/**
- * Created by pfu on 26/10/16.
- *
- * The network switching store (= persistence layer).
- */
 
 var Datastore = require('nedb-promise');
 var db = new Datastore({ filename: './data/networkswitchings.db', autoload: true });

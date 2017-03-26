@@ -1,7 +1,7 @@
 "use strict";
 
 /**
- *
+ * User authentication module.
  * This code here originates (in big parts) from https://github.com/gfeller/Vorlesung_Express
  */
 
@@ -9,7 +9,10 @@ var jwt = require('jsonwebtoken');
 var usersStore = require('../services/usersStore.js');
 
 
-
+/**
+ * @param req
+ * @returns {boolean} true if user is logged in
+ */
 function publicIsLoggedIn(req) {
     return req.user != null;
 }
@@ -46,6 +49,12 @@ function privateCreateSessionToken(name, secret, options) {
 }
 
 
+/**
+ * Handles the login request.
+ * @param req
+ * @param res
+ * @param next
+ */
 function publicHandleLogin(req, res, next) {
     if (publicIsLoggedIn(req)) {
         res.send(true);
@@ -69,7 +78,6 @@ function publicHandleLogin(req, res, next) {
 
 
 /**
- *
  * @param app node application (can be accessed by 'request.app'
  * @param email
  * @param user

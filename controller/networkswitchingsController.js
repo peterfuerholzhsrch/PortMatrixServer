@@ -1,14 +1,16 @@
 "use strict";
+
+
 /**
- * Created by pfu on 26/10/16.
- *
- * The controller module.
+ * The controller module for network switchings.
  */
 
 var store = require("../services/networkswitchingsStore.js");
 var projectsStore = require("../services/projectsStore.js");
 const winston = require('winston');
 
+
+// configure log:
 var LOG_LABEL = 'networkswitching-controller';
 winston.loggers.add(LOG_LABEL, {
     console: {
@@ -196,6 +198,8 @@ function handleQueryString(queryString) {
 
 
 /**
+ * Load one network switching.
+ *
  * @param req id is expected in path (see routes)
  * @param res
  * @param next
@@ -218,6 +222,12 @@ module.exports.getNetworkswitching = function (req, res, next) {
 };
 
 
+/**
+ * Save one network switching.
+ * @param req
+ * @param res
+ * @param next
+ */
 module.exports.saveNetworkswitching = function (req, res, next) {
     log.info("saveNetworkswitching", "req.body", req.body);
 
@@ -240,6 +250,12 @@ module.exports.saveNetworkswitching = function (req, res, next) {
 };
 
 
+/**
+ * Insert one network switching.
+ * @param req
+ * @param res
+ * @param next
+ */
 module.exports.insertNetworkswitching = function (req, res, next) {
     log.info("insertNetworkswitching", "req.body", req.body);
 
@@ -264,6 +280,7 @@ module.exports.insertNetworkswitching = function (req, res, next) {
 
 
 /**
+ * Delete on network switching.
  * @param req id is expected in path (see routes)
  * @param res
  * @param next

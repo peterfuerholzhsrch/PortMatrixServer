@@ -13,7 +13,6 @@ var async = require('async');
 
 var USER_EMAIL = "a@a.a";
 
-// TODO check states!
 
 const nwsws = [
     {

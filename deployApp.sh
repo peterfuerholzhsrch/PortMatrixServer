@@ -2,10 +2,8 @@
 #
 # !!! for Linux and OS X !!!
 #
-
-#
 # Following script can be used when PortMatrix shall be run on the HEROKU cloud.
-# You need a free Heroku account on www.heroku.com.
+# You need a free Heroku account on http://www.heroku.com.
 #
 
 
@@ -53,7 +51,7 @@ git init
 git add .
 git commit -m "YOUR COMMENT"
 
-use 'git push --force ...' to completely overwrite previous deployment:
+# use 'git push --force ...' to completely overwrite previous deployment:
 git push heroku master
 
 # open browser

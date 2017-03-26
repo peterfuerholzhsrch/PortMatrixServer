@@ -1,5 +1,9 @@
 "use strict";
 
+/**
+ * The projects router module.
+ */
+
 
 var express = require('express');
 var usersAndProjectsController = require('../controller/usersAndProjectsController');

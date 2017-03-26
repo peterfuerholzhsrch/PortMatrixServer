@@ -1,5 +1,8 @@
 "use strict";
 
+/**
+ * The controller module for users and projects.
+ */
 
 var util = require('../util/security');
 var usersStore = require("../services/usersStore.js");
@@ -10,6 +13,8 @@ const winston = require('winston');
 var nodemailer = require('nodemailer');
 var app = require('../server');
 
+
+// configure log:
 var LOG_LABEL = 'users-and-projects-controller';
 winston.loggers.add(LOG_LABEL, {
     console: {
@@ -18,6 +23,8 @@ winston.loggers.add(LOG_LABEL, {
 });
 var log = winston.loggers.get(LOG_LABEL);
 
+
+// configure sending emails:
 var smtpConfig = app.settings.smtpConfig;
 
 if (!smtpConfig) {
@@ -44,6 +51,12 @@ let transporter = nodemailer.createTransport(smtpConfig);
 // });
 
 
+/**
+ * Class Project (Definition of a Project on the server side)
+ * @param userId
+ * @param admin
+ * @constructor
+ */
 function Project(userId, admin) {
     this.adminId = userId;
     this.users = [];
@@ -52,11 +65,25 @@ function Project(userId, admin) {
 }
 
 
+/**
+ * Login method.
+ * @param req
+ * @param res
+ * @param next
+ */
 module.exports.login = function(req, res, next) {
     util.handleLogin(req, res, next);
 };
 
 
+/**
+ * Register a new user. Depending on parameters in req a new project is created for the user or the user is added to
+ * an existing project.
+ * @param req
+ * @param res
+ * @param next
+ * @returns {Promise.<TResult>|*}
+ */
 module.exports.registerUser = function(req, res, next) {
 
     return usersStore.registerUserPr(req.body.email, req.body.password)
@@ -87,6 +114,14 @@ module.exports.registerUser = function(req, res, next) {
 };
 
 
+/**
+ * Send project and user's JWT token to res.
+ * @param app
+ * @param res
+ * @param email
+ * @param user
+ * @param project
+ */
 function sendUserProjectAndToken(app, res, email, user, project) {
     var jsonWebTokenObject = security.createWebTokenObject(app, email, user);
     jsonWebTokenObject = Object.assign(jsonWebTokenObject, {project: project});
@@ -95,6 +130,17 @@ function sendUserProjectAndToken(app, res, email, user, project) {
 }
 
 
+/**
+ * Delete a users and updates its relation to projects:
+ * - If user is associated user to a project: User is removed from project.
+ * - If user is project admin (creator) the ownership is passed over to first associated user. If there are not any
+ *   associated users the project and its network switchings are deleted as well.
+ *
+ * @param req
+ * @param res
+ * @param next
+ * @returns {*|Promise.<T>}
+ */
 module.exports.deleteUser = function(req, res, next) {
     var userId = req.params.userId;
     var projectId;
@@ -135,6 +181,12 @@ module.exports.deleteUser = function(req, res, next) {
 };
 
 
+/**
+ * Sends an email to each email address contained in req to invite using set project.
+ * @param req
+ * @param res
+ * @param next
+ */
 module.exports.inviteColleagues = function(req, res, next) {
     var projectId = req.body.projectId;
     var adminId = req.body.adminId;
@@ -148,7 +200,7 @@ module.exports.inviteColleagues = function(req, res, next) {
                 from: '"PortMatrix" <portmatrix@neshendra.ch>', // sender address
                 to: recipientsStr, // list of receivers
                 subject: "Invitation to take part in " + user.email + "'s PortMatrix Project", // Subject line
-                html: buildEmailMessage(getHostPortString(req), user, projectId) // html body
+                html: buildUpInvitionEmailMessage(getHostPortString(req), user, projectId) // html body
             };
 
             // send mail with defined transport object
@@ -168,6 +220,11 @@ module.exports.inviteColleagues = function(req, res, next) {
 
 };
 
+
+/**
+ * @param req
+ * @returns {string} server host name
+ */
 function getHostPortString(req) {
     var url = req.headers.referer;
     var idxOfProtocol = url.indexOf('//');
@@ -175,7 +232,13 @@ function getHostPortString(req) {
     return url.substring(0, idxOfPath > 0 ? idxOfPath : url.length);
 }
 
-function buildEmailMessage(hostPortString, user, projectId) {
+/**
+ * @param hostPortString
+ * @param user
+ * @param projectId
+ * @returns {string} HTML string containing the email body to send to the invitees
+ */
+function buildUpInvitionEmailMessage(hostPortString, user, projectId) {
     return ["<p>Hi</p>",
             user.email + " has invited you to take part in his/her PortMatrix project.<br>",
             "Click <a href='" + hostPortString + "/user?assignedProject=" + projectId + "'>here</a> and sign up ",
@@ -190,6 +253,12 @@ function buildEmailMessage(hostPortString, user, projectId) {
 // project centric functions
 //
 
+/**
+ * Load a project
+ * @param req
+ * @param res
+ * @param next
+ */
 module.exports.getProject = function (req, res, next) {
     projectsStore.getProjectByIdPr(req.params.projectId)
         .then(function (project) {
@@ -204,6 +273,12 @@ module.exports.getProject = function (req, res, next) {
 };
 
 
+/**
+ * Load projects of a user.
+ * @param req
+ * @param res
+ * @param next
+ */
 module.exports.getProjectsByUser = function (req, res, next) {
     projectsStore.getProjectsByUserIdPr(req.query.userId)
         .then(function (docs) {
@@ -226,6 +301,12 @@ module.exports.getProjectsByUser = function (req, res, next) {
 };
 
 
+/**
+ * Save a project.
+ * @param req
+ * @param res
+ * @param next
+ */
 module.exports.saveProject = function (req, res, next) {
     log.d("saveProject", "req.body", req.body);
 
@@ -243,6 +324,12 @@ module.exports.saveProject = function (req, res, next) {
 };
 
 
+/**
+ * Delete a project
+ * @param req
+ * @param res
+ * @param next
+ */
 module.exports.deleteProject = function (req, res, next) {
     deleteNetworkswitchingsAndProjectPr(req.param.id).next(
         function(ok) {
@@ -253,6 +340,11 @@ module.exports.deleteProject = function (req, res, next) {
 };
 
 
+/**
+ * Delete a project and its referenced network switchings.
+ * @param projectId
+ * @returns {*|Promise.<TResult>}
+ */
 function deleteNetworkswitchingsAndProjectPr(projectId) {
     log.info("deleteNetworkswitchingsAndProjectPr", "projectId", projectId);
 

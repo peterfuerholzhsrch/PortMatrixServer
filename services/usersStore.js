@@ -1,15 +1,16 @@
 "use strict";
+
 /**
  * The users store (= persistence layer).
- *
- * This code here originates in some parts from https://github.com/gfeller/Vorlesung_Express
  */
 
+// from https://github.com/gfeller/Vorlesung_Express
 const crypto = require('crypto');
 const cryptoUtil = require('../util/cryptoUtil');
 var Promise = require('promise');
 const winston = require('winston');
 
+// configure log
 var LOG_LABEL = 'users-store';
 winston.loggers.add(LOG_LABEL, {
     console: {
@@ -38,6 +39,12 @@ function User(email, password) {
 // Functions of UsersStore
 //
 
+/**
+ * Register a user
+ * @param email
+ * @param password
+ * @returns {*|Promise.<TResult>}
+ */
 function publicRegisterUserPr(email, password)
 {
     if (!(email && password)) {
@@ -54,7 +61,12 @@ function publicRegisterUserPr(email, password)
         });
 }
 
-
+/**
+ * Authenticate user
+ * @param email
+ * @param password
+ * @returns {*}
+ */
 function publicAuthenticatePr(email, password) {
     if (!(email && password)) {
         return Promise.reject("Email or password invalid");
@@ -74,6 +86,11 @@ function publicAuthenticatePr(email, password) {
 }
 
 
+/**
+ * Get user
+ * @param userId
+ * @returns {*|Promise.<TResult>}
+ */
 function publicGetUserPr(userId) {
     if (!userId) {
         Promise.reject("userId invalid");
@@ -85,6 +102,10 @@ function publicGetUserPr(userId) {
 }
 
 
+/**
+ * Delete user
+ * @param userId
+ */
 function publicDeleteUserPr(userId) {
     if (!userId) {
         Promise.reject("userId invalid");
@@ -98,8 +119,6 @@ function publicDeleteUserPr(userId) {
                 Promise.resolve(userId);
             });
 }
-
-
 
 
 module.exports = {

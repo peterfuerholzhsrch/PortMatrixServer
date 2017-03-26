@@ -1,7 +1,5 @@
 /**
  * Configuration file for PortMatrixServer.
- *
- * Created by pfu on 07/02/17.
  */
 
 var config = {};
