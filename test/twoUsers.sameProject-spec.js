@@ -1,6 +1,10 @@
 "use strict";
 /**
- * This test creates two users on project and deletes the users and the project afterwards.
+ * This test creates two users on the same project, deletes the users and the project afterwards:
+ * - user 1 with project 1 created
+ * - user 2 created and added to project 1
+ * - user 2 deleted
+ * - user 1 deleted which deletes project 1 as well
  *
  * Created by pfu on 06/01/17.
  */
@@ -10,8 +14,6 @@ var async = require('async');
 var ops = require('./operations');
 
 
-
-// create user 1 and 2, check that they belong to same project then delete first user 1, then 2:
 async.series([
     ops.createUser1,
     ops.createUser2,
