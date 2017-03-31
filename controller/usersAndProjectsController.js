@@ -1,14 +1,14 @@
-"use strict";
+'use strict';
 
 /**
  * The controller module for users and projects.
  */
 
 var util = require('../util/security');
-var usersStore = require("../services/usersStore.js");
-var projectsStore = require("../services/projectsStore.js");
-var networkswitchingsStore = require("../services/networkswitchingsStore.js");
-var security = require("../util/security.js");
+var usersStore = require('../services/usersStore.js');
+var projectsStore = require('../services/projectsStore.js');
+var networkswitchingsStore = require('../services/networkswitchingsStore.js');
+var security = require('../util/security.js');
 const winston = require('winston');
 var nodemailer = require('nodemailer');
 var app = require('../server');
@@ -28,11 +28,11 @@ var log = winston.loggers.get(LOG_LABEL);
 var smtpConfig = app.settings.smtpConfig;
 
 if (!smtpConfig) {
-    log.error("smtpConfig is not set!");
-    console.log("Please set environment variable PORTMATRIX_SMTP_CONFIG with a value in the following format:");
-    console.log("smtps://<smtp-user>:<smtp-password>@<smtp-server>");
-    console.log("");
-    console.log("For more information see: https://nodemailer.com/smtp");
+    log.error('smtpConfig is not set!');
+    console.log('Please set environment variable PORTMATRIX_SMTP_CONFIG with a value in the following format:');
+    console.log('smtps://<smtp-user>:<smtp-password>@<smtp-server>');
+    console.log('');
+    console.log('For more information see: https://nodemailer.com/smtp');
     process.exit(1);
 }
 
@@ -60,7 +60,7 @@ let transporter = nodemailer.createTransport(smtpConfig);
 function Project(userId, admin) {
     this.adminId = userId;
     this.users = [];
-    this.name = admin + "'s project";
+    this.name = admin + '\'s project';
     this.creationDate = new Date();
 }
 
@@ -168,7 +168,7 @@ module.exports.deleteUser = function(req, res, next) {
             return Promise.all(promises);
         })
         .then(function (projectId) {
-            if (typeof projectId === "string") {
+            if (typeof projectId === 'string') {
                 return deleteNetworkswitchingsAndProjectPr(projectId);
             } // otherwise it is an array
             return Promise.resolve(null);
@@ -192,14 +192,14 @@ module.exports.inviteColleagues = function(req, res, next) {
     var adminId = req.body.adminId;
     var recipients = req.body.recipients;
 
-    var recipientsStr = recipients.join(", ");
+    var recipientsStr = recipients.join(', ');
 
     usersStore.getUserPr(adminId)
         .then(function(user) {
             let mailOptions = {
                 from: '"PortMatrix" <portmatrix@neshendra.ch>', // sender address
                 to: recipientsStr, // list of receivers
-                subject: "Invitation to take part in " + user.email + "'s PortMatrix Project", // Subject line
+                subject: 'Invitation to take part in ' + user.email + '\'s PortMatrix Project', // Subject line
                 html: buildUpInvitionEmailMessage(getHostPortString(req), user, projectId) // html body
             };
 
@@ -239,12 +239,12 @@ function getHostPortString(req) {
  * @returns {string} HTML string containing the email body to send to the invitees
  */
 function buildUpInvitionEmailMessage(hostPortString, user, projectId) {
-    return ["<p>Hi</p>",
-            user.email + " has invited you to take part in his/her PortMatrix project.<br>",
-            "Click <a href='" + hostPortString + "/user?assignedProject=" + projectId + "'>here</a> and sign up ",
-            "to join! ",
-            "<p>Kind regards,<br>",
-            "PortMatrix-App (On behalf of " + user.email + ")</p>"].join('\n');
+    return ['<p>Hi</p>',
+            user.email + ' has invited you to take part in his/her PortMatrix project.<br>',
+            'Click <a href="' + hostPortString + '/user?assignedProject=' + projectId + '">here</a> and sign up ',
+            'to join! ',
+            '<p>Kind regards,<br>',
+            'PortMatrix-App (On behalf of ' + user.email + ')</p>'].join('\n');
 }
 
 
@@ -308,7 +308,7 @@ module.exports.getProjectsByUser = function (req, res, next) {
  * @param next
  */
 module.exports.saveProject = function (req, res, next) {
-    log.d("saveProject", "req.body", req.body);
+    log.d('saveProject', 'req.body', req.body);
 
     projectsStore.saveProjectPr(req.body)
         .then(
@@ -346,7 +346,7 @@ module.exports.deleteProject = function (req, res, next) {
  * @returns {*|Promise.<TResult>}
  */
 function deleteNetworkswitchingsAndProjectPr(projectId) {
-    log.info("deleteNetworkswitchingsAndProjectPr", "projectId", projectId);
+    log.info('deleteNetworkswitchingsAndProjectPr', 'projectId', projectId);
 
     return networkswitchingsStore.deleteNetworkswitchingsByProjectPr(projectId)
         .then(function(ok) {

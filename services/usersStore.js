@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 /**
  * The users store (= persistence layer).
@@ -23,7 +23,7 @@ var Datastore = require('nedb-promise');
 var db = new Datastore({ filename: './data/users.db', autoload: true });
 
 // set index on 'email' to make it unique
-db.ensureIndex({ fieldName: "email", unique: true, sparse: false }, function(error) { if (error) { throw error; } });
+db.ensureIndex({ fieldName: 'email', unique: true, sparse: false }, function(error) { if (error) { throw error; } });
 
 
 /**
@@ -48,7 +48,7 @@ function User(email, password) {
 function publicRegisterUserPr(email, password)
 {
     if (!(email && password)) {
-        throw new Error("Email or password invalid");
+        throw new Error('Email or password invalid');
     }
     var user = new User(email, password);
 
@@ -69,19 +69,19 @@ function publicRegisterUserPr(email, password)
  */
 function publicAuthenticatePr(email, password) {
     if (!(email && password)) {
-        return Promise.reject("Email or password invalid");
+        return Promise.reject('Email or password invalid');
     }
 
     return db.findOne({ email: email })
         .then(function (doc) {
                 if (doc == null) {
-                    throw new Error("Email or password invalid");
+                    throw new Error('Email or password invalid');
                 }
                 const passwordValid = doc && doc.passwortHash == cryptoUtil.hashPwd(password);
                 if (passwordValid) {
                     return Promise.resolve(doc);
                 }
-                throw new Error("Email or password invalid");
+                throw new Error('Email or password invalid');
             });
 }
 
@@ -93,7 +93,7 @@ function publicAuthenticatePr(email, password) {
  */
 function publicGetUserPr(userId) {
     if (!userId) {
-        Promise.reject("userId invalid");
+        Promise.reject('userId invalid');
     }
     return db.findOne({ _id: userId })
         .then(function (doc) {
@@ -108,13 +108,13 @@ function publicGetUserPr(userId) {
  */
 function publicDeleteUserPr(userId) {
     if (!userId) {
-        Promise.reject("userId invalid");
+        Promise.reject('userId invalid');
     }
 
     db.remove({ _id: userId })
         .then(function (numRemoved) {
                 if (numRemoved <= 0) {
-                    throw new Error("no user found with set userId");
+                    throw new Error('no user found with set userId');
                 }
                 Promise.resolve(userId);
             });

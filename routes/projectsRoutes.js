@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 /**
  * The projects router module.
@@ -10,10 +10,10 @@ var usersAndProjectsController = require('../controller/usersAndProjectsControll
 
 var router = express.Router();
 
-router.get("/:projectId/", usersAndProjectsController.getProject);
+router.get('/:projectId/', usersAndProjectsController.getProject);
 
 // Following format supported: /api/projects?userId=<ID>[&assignedToo=true|false]
-router.get("/", usersAndProjectsController.getProjectsByUser);
+router.get('/', usersAndProjectsController.getProjectsByUser);
 
 
 module.exports = router;

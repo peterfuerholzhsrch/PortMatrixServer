@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 /**
  * Created by pfu on 25/01/17.
  */
@@ -31,4 +31,4 @@ module.exports = {
     NWSWS_REST_URL: PUBLIC_BASE_URL + '/api/nwsws',
     frisby : publicFrisby,
     callbackAndToss: publicCallbackAndToss
-}
+};

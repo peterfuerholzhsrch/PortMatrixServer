@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 /**
  * The project store (= persistence layer). A project combines an admin (type User), his coworkers (type User) with
@@ -20,7 +20,7 @@ var log = winston.loggers.get(LOG_LABEL);
 var db = new Datastore({ filename: './data/projects.db', autoload: true });
 
 // set index on 'adminId' since this is mostly requested
-db.ensureIndex({ fieldName: "adminId", unique: true }, function(error) { if (error) { throw error; } });
+db.ensureIndex({ fieldName: 'adminId', unique: true }, function(error) { if (error) { throw error; } });
 
 
 /**
@@ -43,7 +43,7 @@ function publicCheckProjectExists(projectId) {
 function publicGetProjectByIdPr(projectId) {
     return db.findOne({ _id: projectId })
         .then(function(foundDoc){
-            log.info("publicGetProjectByIdPr", "_id", projectId, "found", foundDoc);
+            log.info('publicGetProjectByIdPr', '_id', projectId, 'found', foundDoc);
             return Promise.resolve(foundDoc);
         });
 
@@ -64,7 +64,7 @@ function publicGetProjectsByUserIdPr(userId) {
             var admin = foundDocs.filter(function(doc) { return doc.adminId == userId});
             var users = foundDocs.filter(function(doc) { return doc.adminId != userId});
             foundDocs = admin.concat(users);
-            log.info("publicGetProjectById", "adminId", userId, "found", foundDocs);
+            log.info('publicGetProjectById', 'adminId', userId, 'found', foundDocs);
             return Promise.resolve(foundDocs);
         });
 }
@@ -91,10 +91,10 @@ function publicSaveProjectPr(project) {
  */
 function publicInsertProjectPr(project) {
     if (!project) {
-        throw new Error("Project must not be null!")
+        throw new Error('Project must not be null!')
     }
     if (!project.adminId) {
-        throw new Error("Project's admin must not be null!");
+        throw new Error('Project\'s admin must not be null!');
     }
 
     return db.insert(project).then((newDoc) => {
@@ -114,14 +114,14 @@ function publicInsertProjectPr(project) {
  */
 function publicAddUserToProjectPr(projectId, userId) {
     if (!projectId) {
-        throw new Error("ProjectId must not be null!")
+        throw new Error('ProjectId must not be null!')
     }
     if (!userId) {
-        throw new Error("UserId must not be null!");
+        throw new Error('UserId must not be null!');
     }
     return db.findOne({ _id: projectId })
         .then(function(project) {
-            log.info("publicAddUserToProjectPr", "userId", userId, "found", project);
+            log.info('publicAddUserToProjectPr', 'userId', userId, 'found', project);
 
             if (!project.users) {
                 project.users = [];
@@ -130,7 +130,7 @@ function publicAddUserToProjectPr(projectId, userId) {
                 project.users.push(userId);
                 return publicSaveProjectPr(project);
             }
-            log.info("publicAddUserToProjectPr, UserId=", userId, " already added to project with id=", projectId, "!");
+            log.info('publicAddUserToProjectPr, UserId=', userId, ' already added to project with id=', projectId, '!');
             return Promise.resolve(project);
         });
 }
@@ -143,7 +143,7 @@ function publicAddUserToProjectPr(projectId, userId) {
 function publicDeleteProjectPr(id) {
     return db.remove({ _id: id }, {})
         .then(function(foundDoc){
-            log.info("publicDeleteProjectPr, Delete Project", "id", id, "found", foundDoc);
+            log.info('publicDeleteProjectPr, Delete Project', 'id', id, 'found', foundDoc);
             return Promise.resolve(id);
         });
 }

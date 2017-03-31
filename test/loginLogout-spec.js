@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 /**
  * This test tests the following:
  * - log in with correct / wrong credentials
@@ -13,7 +13,7 @@ var async = require('async');
 var userId;
 var jwtToken;
 
-const EMAIL = "peter@peter-fuerholz.ch";
+const EMAIL = 'peter@peter-fuerholz.ch';
 
 
 async.series([
@@ -22,7 +22,7 @@ async.series([
         test.frisby.create('Preparation: Create a User')
             .post(test.USERS_REST_URL, {
                 email: EMAIL,
-                password: "1234"
+                password: '1234'
             })
             .expectStatus(200)
             .afterJSON(function () {
@@ -38,7 +38,7 @@ async.series([
         var f = test.frisby.create('Login with wrong credentials')
             .post(test.LOGIN_REST_URL, {
                 email: EMAIL,
-                password: "4321"
+                password: '4321'
             })
             .expectStatus(401)
             .inspectBody();
@@ -49,7 +49,7 @@ async.series([
         test.frisby.create('Login with correct credentials')
             .post(test.LOGIN_REST_URL, {
                 email: EMAIL,
-                password: "1234"
+                password: '1234'
             })
             .expectStatus(200)
             .inspectBody()
@@ -82,7 +82,7 @@ async.series([
         console.log('Delete User');
         var f = test.frisby.create('Delete User')
             .addHeader('authorization', 'Bearer ' + jwtToken)
-            .delete(test.USERS_REST_URL + "/" + userId)
+            .delete(test.USERS_REST_URL + '/' + userId)
             .expectStatus(200)
             .inspectBody();
         test.callbackAndToss(f, cb);

@@ -1,12 +1,12 @@
-"use strict";
+'use strict';
 
 
 /**
  * The controller module for network switchings.
  */
 
-var store = require("../services/networkswitchingsStore.js");
-var projectsStore = require("../services/projectsStore.js");
+var store = require('../services/networkswitchingsStore.js');
+var projectsStore = require('../services/projectsStore.js');
 const winston = require('winston');
 
 
@@ -54,31 +54,31 @@ module.exports.getNetworkswitchings = function (req, res) {
     var sort = req.query.sort;
     var q = req.query.q;
 
-    log.info("getNetworkswitchings q=", q, ", offset=", offset, ", limit=", limit, ", sort-parameters=", sort);
+    log.info('getNetworkswitchings q=', q, ', offset=', offset, ', limit=', limit, ', sort-parameters=', sort);
 
     // handle offset & limit:
     if (offset) {
         offset = Number.parseInt(offset);
         if (isNaN(offset)) {
-            throw new Error("offset invalid");
+            throw new Error('offset invalid');
         }
     }
     if (limit) {
         limit = Number.parseInt(limit);
         if (isNaN(limit)) {
-            throw new Error("limit invalid");
+            throw new Error('limit invalid');
         }
     }
 
     // handle sortings:
     var sortings = null;
     if (sort && sort.trim()) {
-        sortings = sort.split(",");
+        sortings = sort.split(',');
         sortings = sortings.filter(token => !!token.trim());
 
         // '\S' = non-white-space character
         if (!sortings.every(token => token.match(/^[+-]\S+$/))) {
-            throw new Error("Sort parameter invalid: " + sort);
+            throw new Error('Sort parameter invalid: ' + sort);
         }
         sortings = sortings.reduce((value, token) => {
             var ascDesc = token[0];
@@ -132,7 +132,7 @@ function handleQueryString(queryString) {
         var searchInt = null;
         var booleanRegex = new RegExp(/^(true|false)$/gi);
 
-        searchString = new RegExp(queryToken, "i");
+        searchString = new RegExp(queryToken, 'i');
         if (booleanRegex.test(queryToken)) {
             searchBoolean = new Boolean(queryToken.toLowerCase() == 'true');
         }
@@ -143,7 +143,7 @@ function handleQueryString(queryString) {
         }
         // try to convert to date (see http://stackoverflow.com/questions/1353684/detecting-an-invalid-date-date-instance-in-javascript):
         var presumableDate = new Date(queryToken);
-        if (Object.prototype.toString.call(presumableDate) === "[object Date]") {
+        if (Object.prototype.toString.call(presumableDate) === '[object Date]') {
             // it is a date
             if (!isNaN(presumableDate.getTime())) {
                 searchDate = presumableDate;
@@ -205,7 +205,7 @@ function handleQueryString(queryString) {
  * @param next
  */
 module.exports.getNetworkswitching = function (req, res, next) {
-    log.info("getNetworkswitching", "req.body", req.body);
+    log.info('getNetworkswitching', 'req.body', req.body);
 
     projectsStore.checkProjectExists(req.params.projectId)
         .then(function() {
@@ -229,7 +229,7 @@ module.exports.getNetworkswitching = function (req, res, next) {
  * @param next
  */
 module.exports.saveNetworkswitching = function (req, res, next) {
-    log.info("saveNetworkswitching", "req.body", req.body);
+    log.info('saveNetworkswitching', 'req.body', req.body);
 
     var projectId = req.params.projectId;
     projectsStore.checkProjectExists(projectId)
@@ -257,7 +257,7 @@ module.exports.saveNetworkswitching = function (req, res, next) {
  * @param next
  */
 module.exports.insertNetworkswitching = function (req, res, next) {
-    log.info("insertNetworkswitching", "req.body", req.body);
+    log.info('insertNetworkswitching', 'req.body', req.body);
 
     var projectId = req.params.projectId;
     projectsStore.checkProjectExists(projectId)

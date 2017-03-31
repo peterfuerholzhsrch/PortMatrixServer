@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 
 /**
@@ -9,7 +9,7 @@ var express = require('express');
 var router = express.Router();
 var usersAndProjectsController = require('../controller/usersAndProjectsController');
 
-router.delete("/users/:userId", usersAndProjectsController.deleteUser);
-router.post("/usersmail", usersAndProjectsController.inviteColleagues);
+router.delete('/users/:userId', usersAndProjectsController.deleteUser);
+router.post('/usersmail', usersAndProjectsController.inviteColleagues);
 
 module.exports = router;

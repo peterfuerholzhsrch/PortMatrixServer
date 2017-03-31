@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 /**
  * This test creates two users on the same project, then deletes the admin afterwards the rest:
  * - user 1 with project 1 created
@@ -24,7 +24,7 @@ async.series([
             .expectStatus(200)
             .inspectBody()
             .afterJSON(function(json) {
-                console.log("projects of user1=" + ops.getUserId1() + ": " + JSON.stringify(json));
+                console.log('projects of user1=' + ops.getUserId1() + ': ' + JSON.stringify(json));
                 expect(json.data[0]._id).toEqual(ops.getProjectId1());
                 cb(null);
             })
@@ -32,7 +32,7 @@ async.series([
     },
     ops.createUser2,
     function(cb) {
-        console.log("Check that User 1's and User 2's project are the same");
+        console.log('Check that User 1\'s and User 2\'s project are the same');
         var f = test.frisby.create('Get project of user2')
             .addHeader('authorization', 'Bearer ' + ops.getJwtToken2())
             .get(test.PROJECTS_REST_URL + '?' + 'userId=' + ops.getUserId2() + '&' + 'assignedToo=true')
@@ -44,7 +44,7 @@ async.series([
     },
     ops.deleteUser1,
     function(cb) {
-        console.log("Check that User 2 is now the admin of the project");
+        console.log('Check that User 2 is now the admin of the project');
         var f = test.frisby.create('Get project of user2')
             .addHeader('authorization', 'Bearer ' + ops.getJwtToken2())
             .get(test.PROJECTS_REST_URL + '?' + 'userId=' + ops.getUserId2())

@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 /**
  * User authentication module.
@@ -43,7 +43,7 @@ function publicCurrentUser(req) {
  */
 function privateCreateSessionToken(name, secret, options) {
     if (!name) {
-        return "";
+        return '';
     }
     return jwt.sign({name}, secret, options);
 }
@@ -67,11 +67,11 @@ function publicHandleLogin(req, res, next) {
                     res.end();
                 }
                 else {
-                    res.status("401").end()
+                    res.status('401').end()
                 }
             },
             function (err) {
-                res.status("401").end();
+                res.status('401').end();
             });
     }
 }
@@ -84,7 +84,7 @@ function publicHandleLogin(req, res, next) {
  * @returns {{token: *, user: *}}
  */
 function publicCreateWebTokenObject(app, email, user) {
-    var jsonWebToken = privateCreateSessionToken(email, app.get("jwt-secret"), app.get("jwt-sign"));
+    var jsonWebToken = privateCreateSessionToken(email, app.get('jwt-secret'), app.get('jwt-sign'));
     return { token: jsonWebToken, user: user };
 }
 

@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 /**
  * This is not a real test. Execute this 'test' to fill the database with initial data:
  * - user with email 'a@a.a' and password 'a'
@@ -11,7 +11,7 @@
 var test = require('./testSettings');
 var async = require('async');
 
-var USER_EMAIL = "a@a.a";
+var USER_EMAIL = 'a@a.a';
 
 
 const nwsws = [
@@ -210,7 +210,7 @@ async.series([
         test.frisby.create('Create User')
             .post(test.USERS_REST_URL, {
                 email: USER_EMAIL,
-                password: "a"
+                password: 'a'
             })
             .expectStatus(200)
             .inspectBody()
@@ -239,12 +239,12 @@ function createNwsw(nwsws, idx, cb) {
 
     test.frisby.create('Create network switching')
         .addHeader('authorization', 'Bearer ' + jwtToken)
-        .post(test.NWSWS_REST_URL + "/" + projectId, nwsws[idx], {json: true})
+        .post(test.NWSWS_REST_URL + '/' + projectId, nwsws[idx], {json: true})
         .expectStatus(200)
-        .after(function (json) {
+        .after(function () {
             ++idx;
             if (idx >= nwsws.length) {
-                console.log("createNwsw idx=", idx);
+                console.log('createNwsw idx=', idx);
                 cb(null);
             }
             createNwsw(nwsws, idx, cb);
