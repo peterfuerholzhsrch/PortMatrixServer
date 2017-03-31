@@ -1,16 +1,1 @@
 {"$$indexCreated":{"fieldName":"email","unique":true,"sparse":false}}
-{"email":"info@peter-fuerholz.ch","passwortHash":"3ffdc769948072ff8335ddd9e1c9a8827fd11cfa882ae8531c73ea64ff6214bd","_id":"znj3ZMJxpuKlr4DL"}
-{"$$deleted":true,"_id":"znj3ZMJxpuKlr4DL"}
-{"email":"peter@peter-fuerholz.ch","passwortHash":"3ffdc769948072ff8335ddd9e1c9a8827fd11cfa882ae8531c73ea64ff6214bd","_id":"TtYzDSDk6IMJGbVi"}
-{"email":"peter.fuerholz@vtxmail.ch","passwortHash":"083f26692fdaa34a0af8ecaef13f4fbaf0412d4f8382d7f87c0f9d32b14aabbe","_id":"D2aSZMoMH3Mmim3O"}
-{"$$deleted":true,"_id":"D2aSZMoMH3Mmim3O"}
-{"$$deleted":true,"_id":"TtYzDSDk6IMJGbVi"}
-{"email":"peter@peter-fuerholz.ch","passwortHash":"3ffdc769948072ff8335ddd9e1c9a8827fd11cfa882ae8531c73ea64ff6214bd","_id":"oSPhOlvZ1pCrUiDX"}
-{"email":"peter.fuerholz@vtxmail.ch","passwortHash":"083f26692fdaa34a0af8ecaef13f4fbaf0412d4f8382d7f87c0f9d32b14aabbe","_id":"bCxWW04rng5db9b8"}
-{"$$deleted":true,"_id":"oSPhOlvZ1pCrUiDX"}
-{"$$deleted":true,"_id":"bCxWW04rng5db9b8"}
-{"email":"peter@peter-fuerholz.ch","passwortHash":"3ffdc769948072ff8335ddd9e1c9a8827fd11cfa882ae8531c73ea64ff6214bd","_id":"w5ZlQ6ULz3M1r8lP"}
-{"$$deleted":true,"_id":"w5ZlQ6ULz3M1r8lP"}
-{"email":"peter@peter-fuerholz.ch","passwortHash":"3ffdc769948072ff8335ddd9e1c9a8827fd11cfa882ae8531c73ea64ff6214bd","_id":"HLeXP2xF66BIBXph"}
-{"$$deleted":true,"_id":"HLeXP2xF66BIBXph"}
-{"email":"a@a.a","passwortHash":"86f95b31beddf5ce2b087713476a8a1c54c6aefed631d16bea57170774024808","_id":"4yRbVzVjBKzFLvcu"}

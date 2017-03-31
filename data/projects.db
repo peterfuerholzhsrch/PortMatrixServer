@@ -1,16 +1,1 @@
 {"$$indexCreated":{"fieldName":"adminId","unique":true,"sparse":false}}
-{"adminId":"znj3ZMJxpuKlr4DL","users":[],"name":"info@peter-fuerholz.ch's project","creationDate":{"$$date":1490951470775},"_id":"2YkVgRVIfoT7BL0H"}
-{"$$deleted":true,"_id":"2YkVgRVIfoT7BL0H"}
-{"adminId":"TtYzDSDk6IMJGbVi","users":[],"name":"peter@peter-fuerholz.ch's project","creationDate":{"$$date":1490951478332},"_id":"K3tpHgfF3brJ3brJ"}
-{"adminId":"TtYzDSDk6IMJGbVi","users":["D2aSZMoMH3Mmim3O"],"name":"peter@peter-fuerholz.ch's project","creationDate":{"$$date":1490951478332},"_id":"K3tpHgfF3brJ3brJ"}
-{"adminId":"TtYzDSDk6IMJGbVi","users":[],"name":"peter@peter-fuerholz.ch's project","creationDate":{"$$date":1490951478332},"_id":"K3tpHgfF3brJ3brJ"}
-{"$$deleted":true,"_id":"K3tpHgfF3brJ3brJ"}
-{"adminId":"oSPhOlvZ1pCrUiDX","users":[],"name":"peter@peter-fuerholz.ch's project","creationDate":{"$$date":1490951485573},"_id":"8bjC1IloCqV81aDN"}
-{"adminId":"oSPhOlvZ1pCrUiDX","users":["bCxWW04rng5db9b8"],"name":"peter@peter-fuerholz.ch's project","creationDate":{"$$date":1490951485573},"_id":"8bjC1IloCqV81aDN"}
-{"adminId":"bCxWW04rng5db9b8","users":[],"name":"peter@peter-fuerholz.ch's project","creationDate":{"$$date":1490951485573},"_id":"8bjC1IloCqV81aDN"}
-{"$$deleted":true,"_id":"8bjC1IloCqV81aDN"}
-{"adminId":"w5ZlQ6ULz3M1r8lP","users":[],"name":"peter@peter-fuerholz.ch's project","creationDate":{"$$date":1490951496698},"_id":"aoP4iQIwhSB6krUZ"}
-{"$$deleted":true,"_id":"aoP4iQIwhSB6krUZ"}
-{"adminId":"HLeXP2xF66BIBXph","users":[],"name":"peter@peter-fuerholz.ch's project","creationDate":{"$$date":1490951504341},"_id":"4zyWW7vBsky7A2UX"}
-{"$$deleted":true,"_id":"4zyWW7vBsky7A2UX"}
-{"adminId":"4yRbVzVjBKzFLvcu","users":[],"name":"a@a.a's project","creationDate":{"$$date":1490951522661},"_id":"eJE6Ox8d94vLSpXQ"}
