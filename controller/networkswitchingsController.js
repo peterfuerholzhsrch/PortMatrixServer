@@ -46,11 +46,11 @@ var log = winston.loggers.get(LOG_LABEL);
  *
  * @param res
  */
-module.exports.getNetworkswitchings = function (req, res) {
+module.exports.getNetworkswitchings = function (req, res, next) {
     // offset and limit shall be numbers:
     var offset = req.query.offset;
     var limit = req.query.limit;
-    // sort must have a form like: sort=-manufactorer,+model
+    // sort must have a form like: sort=-manufacturer,+model
     var sort = req.query.sort;
     var q = req.query.q;
 
@@ -96,12 +96,12 @@ module.exports.getNetworkswitchings = function (req, res) {
         query['$and'] = queryArray;
     }
 
-    projectsStore.checkProjectExists(req.params.projectId)
+    projectsStore.checkProjectAccess(req.user.userId, req.params.projectId)
         .then(function() {
             return store.getNetworkswitchingsPr(query, offset, limit, sortings)
         })
         .then(function (docs) {
-            log.info('checkProjectExists', 'number of docs =', docs ? docs.length : 0);
+            log.info('getNetworkswitchingsPr', 'number of docs =', docs ? docs.length : 0);
             res.type('application/json');
             // pack array into data-objects (see https://angular.io/docs/ts/latest/guide/server-communication.html#!#in-mem-web-api)
             res.jsonp({data: docs});
@@ -207,7 +207,7 @@ function handleQueryString(queryString) {
 module.exports.getNetworkswitching = function (req, res, next) {
     log.info('getNetworkswitching', 'req.body', req.body);
 
-    projectsStore.checkProjectExists(req.params.projectId)
+    projectsStore.checkProjectAccess(req.user.userId, req.params.projectId)
         .then(function() {
             // 'id' reference to the router pattern: '/api/notes/:id' !
             return store.getNetworkswitchingPr(req.params.id)
@@ -232,7 +232,7 @@ module.exports.saveNetworkswitching = function (req, res, next) {
     log.info('saveNetworkswitching', 'req.body', req.body);
 
     var projectId = req.params.projectId;
-    projectsStore.checkProjectExists(projectId)
+    projectsStore.checkProjectAccess(req.user.userId, projectId)
         .then(function() {
             // set id and reference to project:
             req.body['projectId'] = projectId;
@@ -260,7 +260,7 @@ module.exports.insertNetworkswitching = function (req, res, next) {
     log.info('insertNetworkswitching', 'req.body', req.body);
 
     var projectId = req.params.projectId;
-    projectsStore.checkProjectExists(projectId)
+    projectsStore.checkProjectAccess(req.user.userId, projectId)
         .then(function() {
             // _id shall be set by the db-server:
             delete req.body._id;
@@ -286,7 +286,7 @@ module.exports.insertNetworkswitching = function (req, res, next) {
  * @param next
  */
 module.exports.deleteNetworkswitching = function (req, res, next) {
-    projectsStore.checkProjectExists(req.params.projectId)
+    projectsStore.checkProjectAccess(req.user.userId, req.params.projectId)
         .then(function() {
             // 'id' reference to the router pattern: '/api/notes/:id' !
             return store.deleteNetworkswitchingPr(req.params.id)

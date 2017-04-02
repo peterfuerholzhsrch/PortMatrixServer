@@ -94,7 +94,7 @@ module.exports.registerUser = function(req, res, next) {
                 // add user to referenced project:
                 projectsStore.addUserToProjectPr(referencedProject, newUser._id)
                     .then(function(project) {
-                        return sendUserProjectAndToken(req.app, res, req.body.email, newUser, project);
+                        return sendUserProjectAndToken(req.app, res, newUser, project);
                     }, function(err) {
                         next(err);
                     });
@@ -103,7 +103,7 @@ module.exports.registerUser = function(req, res, next) {
                 // create new project:
                 projectsStore.insertProjectPr(new Project(newUser._id, req.body.email))
                     .then(function(project) {
-                        return sendUserProjectAndToken(req.app, res, req.body.email, newUser, project);
+                        return sendUserProjectAndToken(req.app, res, newUser, project);
                     }, function(err) {
                         next(err);
                     });
@@ -118,13 +118,12 @@ module.exports.registerUser = function(req, res, next) {
  * Send project and user's JWT token to res.
  * @param app
  * @param res
- * @param email
  * @param user
  * @param project
  */
-function sendUserProjectAndToken(app, res, email, user, project) {
-    var jsonWebTokenObject = security.createWebTokenObject(app, email, user);
-    jsonWebTokenObject = Object.assign(jsonWebTokenObject, {project: project});
+function sendUserProjectAndToken(app, res, user, project) {
+    var jsonWebTokenObject = security.createWebTokenObject(app, user);
+    jsonWebTokenObject = Object.assign(jsonWebTokenObject, { project: project, user: user });
     res.jsonp(jsonWebTokenObject);
     res.end();
 }
@@ -143,6 +142,11 @@ function sendUserProjectAndToken(app, res, email, user, project) {
  */
 module.exports.deleteUser = function(req, res, next) {
     var userId = req.params.userId;
+    if (req.user.userId !== userId) {
+        log.warn('User pretends to be userId=' + userId + ', according JWT his ID is ' + req.user.userId + '!');
+        return Promise.reject('You can delete your account only!');
+    }
+
     var projectId;
     return projectsStore.getProjectsByUserIdPr(userId)
         .then(function(projects) {
@@ -189,18 +193,19 @@ module.exports.deleteUser = function(req, res, next) {
  */
 module.exports.inviteColleagues = function(req, res, next) {
     var projectId = req.body.projectId;
-    var adminId = req.body.adminId;
     var recipients = req.body.recipients;
-
     var recipientsStr = recipients.join(', ');
 
-    usersStore.getUserPr(adminId)
-        .then(function(user) {
+    // make sure that te user has access to referenced project:
+    var userId = req.user.userId;
+    var email = req.user.userEmail;
+    projectsStore.checkProjectAccess(userId, projectId, true/*adminOnly*/)
+        .then(function() {
             let mailOptions = {
                 from: '"PortMatrix" <portmatrix@neshendra.ch>', // sender address
                 to: recipientsStr, // list of receivers
-                subject: 'Invitation to take part in ' + user.email + '\'s PortMatrix Project', // Subject line
-                html: buildUpInvitionEmailMessage(getHostPortString(req), user, projectId) // html body
+                subject: 'Invitation to take part in ' + email + '\'s PortMatrix Project', // Subject line
+                html: buildUpInvitionEmailMessage(getHostPortString(req), email, projectId) // html body
             };
 
             // send mail with defined transport object
@@ -234,17 +239,17 @@ function getHostPortString(req) {
 
 /**
  * @param hostPortString
- * @param user
+ * @param email
  * @param projectId
  * @returns {string} HTML string containing the email body to send to the invitees
  */
-function buildUpInvitionEmailMessage(hostPortString, user, projectId) {
+function buildUpInvitionEmailMessage(hostPortString, email, projectId) {
     return ['<p>Hi</p>',
-            user.email + ' has invited you to take part in his/her PortMatrix project.<br>',
+            email + ' has invited you to take part in his/her PortMatrix project.<br>',
             'Click <a href="' + hostPortString + '/user?assignedProject=' + projectId + '">here</a> and sign up ',
             'to join! ',
             '<p>Kind regards,<br>',
-            'PortMatrix-App (On behalf of ' + user.email + ')</p>'].join('\n');
+            'PortMatrix-App (On behalf of ' + email + ')</p>'].join('\n');
 }
 
 

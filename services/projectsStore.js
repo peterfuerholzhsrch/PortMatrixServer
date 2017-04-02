@@ -24,12 +24,19 @@ db.ensureIndex({ fieldName: 'adminId', unique: true }, function(error) { if (err
 
 
 /**
- * Check if project with set projectId exists.
+ * Check if project with set projectId exists and the user is registered on set project.
+ * @param userId
  * @param projectId
+ * @param adminOnly optional, default = false
  * @returns {*|Promise.<TResult>}
  */
-function publicCheckProjectExists(projectId) {
-    return db.findOne({ _id: projectId }).then(function(foundDoc) {
+function publicCheckProjectAccess(userId, projectId, adminOnly) {
+    adminOnly = adminOnly || false;
+    var orClauseArr = [{ adminId: userId }];
+    if (!adminOnly) {
+        orClauseArr.push({ users: userId });
+    }
+    return db.findOne({ _id: projectId, $or: orClauseArr }).then(function(foundDoc) {
         return foundDoc ? Promise.resolve(foundDoc) : Promise.reject('No project available under set ID=' + projectId);
     });
 }
@@ -150,7 +157,7 @@ function publicDeleteProjectPr(id) {
 
 
 module.exports = {
-    checkProjectExists: publicCheckProjectExists,
+    checkProjectAccess: publicCheckProjectAccess,
     getProjectByIdPr: publicGetProjectByIdPr,
     getProjectsByUserIdPr : publicGetProjectsByUserIdPr,
     saveProjectPr : publicSaveProjectPr,

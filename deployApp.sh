@@ -32,7 +32,7 @@ cp -r ~/WebstormProjects/PortMatrixServer/.env .
 # FILL IN PASSWORD IN FILE '.env' !!!
 
 pushd ~/WebstormProjects/PortMatrix
-$(npm bin)/ng build
+$(npm bin)/ng build --env=prod
 popd
 
 cp -r ~/WebstormProjects/PortMatrix/dist/ ./public/
