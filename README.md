@@ -5,14 +5,14 @@ This is the server project of the [PortMatrix](https://github.com/peterfuerholzh
 ## File Overview
  
 Following files are needed for the Heroku deployment only:
-* .env
-* deployApp.sh
-Unfortunately the settings within .env do not work in the cloud. (When using 'heroku local web' is OK.)
+
+* `.env`
+* `deployApp.sh`
+Unfortunately the settings within `.env` did not work in the cloud in my case. (When using `heroku local web` ìt is OK.)
 So I configured these settings via Heroku's dashboard (Settings, Config Variables).
 
-/data
-This project uses NeDB as database. Since the database was not the main issue we sticked to this simple solution. A change to 
-MongoDB should be possible with ease.
+## Directory `/data`
+This project uses NeDB as database engine. Since the database was not the main issue we sticked to this simple solution. A change to MongoDB is easily possible.
 
 
 
